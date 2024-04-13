@@ -117,7 +117,7 @@ class PlayerActor:
         self.__color_orange = "#FF7F26"
         self.__board_border_color = "#6b0105"
         self.__canvas = Canvas(self.__tk,
-                               width=self.__width,
+                               width=self.__full_width,
                                height=self.__height,
                                bg=self.__background_color)
         self.__triangle_canvas: [TriangleCanvas] = []
@@ -191,10 +191,11 @@ class PlayerActor:
                                   font=('Helvetica 60 bold'))
 
     def draw_dice_text(self, x, y):
-        self.__canvas.create_text(x, y, text="Jogue os dados",
-                                  fill="black",
-                                  font=('Helvetica 20 bold'),
-                                  tag="dicebox")
+        label = Button(self.__tk, text="Jogue os dados", command=self.command_dice)
+        label.pack()
+
+    def command_dice(self):
+        print("Jogar dados")
 
     def draw_checkers_initial(self):
         first_triangle_white = self.__triangle_canvas[0]
@@ -336,7 +337,7 @@ class PlayerActor:
                                        fill=self.__board_background_color)
 
     def create(self):
-        self.__canvas.pack(fill=BOTH, expand=True)
+        self.__canvas.pack()
 
     def calculate_triangle_width(self):
         space = self.__width \
