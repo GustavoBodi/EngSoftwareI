@@ -9,15 +9,17 @@ class TriangleCanvas:
                  padding_x: int,
                  padding_y: int,
                  base: int,
-                 height: int):
+                 height: int,
+                 checkers_bottom_padding: int,
+                 checkers_between_padding: int):
         self._padding_x = padding_x
         self._padding_y = padding_y
         self.__base = base
         self.__height = height
         self._canvas = canvas
         self.__checkers_in = 0
-        self.__checker_between_padding = 35
-        self.__checker_bottom_padding = 10
+        self.__checker_between_padding = checkers_between_padding
+        self.__checker_bottom_padding = checkers_bottom_padding
         self.__checkers = []
         self.__reverse = False
 
@@ -100,9 +102,9 @@ class PlayerActor:
     def __init__(self):
         self.__tk = Tk()
         self.__tk.title("Gamão")
-        self.__width = 1600
+        self.__width = 1500
         self.__full_width = self.__width + 400
-        self.__height = 1000
+        self.__height = 900
         self.__padding = 50
         self.__thickness = 20
         self.__middle_line_thickness = 20 + self.__thickness
@@ -123,9 +125,12 @@ class PlayerActor:
         self.__triangle_canvas: [TriangleCanvas] = []
         self.__checker_canvas: [CheckersCanvas] = []
         self.__triangle_base = self.calculate_triangle_width()
-        self.__checker_size = self.__triangle_base * 0.42
+        self.__checker_size = min(self.__triangle_base * 0.42,
+                                  self.calculate_triangle_height() * 0.2)
         self.__checker_points_box_size = 100
         self.__dice_distance = 50
+        self.__checker_between_padding = self.__checker_size * 0.8
+        self.__checker_bottom_padding = self.__checker_size * 0.3
         self.draw_board_background()
         self.draw_board_border()
         self.draw_triangles()
@@ -239,7 +244,9 @@ class PlayerActor:
                                padding_x,
                                padding_y,
                                self.__triangle_base,
-                               self.calculate_triangle_height())
+                               self.calculate_triangle_height(),
+                               self.__checker_bottom_padding,
+                               self.__checker_between_padding)
                 )
 
     def draw_triangles(self):
