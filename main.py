@@ -136,8 +136,8 @@ class PlayerActor:
                                width=self.__full_width,
                                height=self.__height,
                                bg=self.__background_color)
-        self.__triangle_canvas: [PosicaoCanvas] = []
-        self.__checker_canvas: [PecasCanvas] = []
+        self.__posicoes: [PosicaoCanvas] = []
+        self.__pecas: [PecasCanvas] = []
         self.__triangle_base = self.calculate_triangle_width()
         self.__checker_size = min(self.__triangle_base * 0.42,
                                   self.calculate_triangle_height() * 0.2)
@@ -161,16 +161,17 @@ class PlayerActor:
                               self.__thickness / 4,
                               self.__checker_points_box_size,
                               self.__checker_points_box_size)
-        self.__first_dice = DiceCanvas(self.__canvas,
+        self.__primeiro_dado = DiceCanvas(self.__canvas,
                                        self.__width + self.__checker_points_box_size +
                                        self.__dice_distance,
                                        self.__height / 2)
-        self.__second_dice = DiceCanvas(self.__canvas,
+        self.__segundo_dado = DiceCanvas(self.__canvas,
                                         self.__width + self.__checker_points_box_size * 2 +
                                         self.__dice_distance,
                                         self.__height / 2)
-        self.draw_dice_text(self.__width + self.__checker_points_box_size * 2,
-                            self.__height / 2 + self.__dice_distance)
+
+        self.__dado_label = Button(self.__tk, text="Jogue os dados", command=self.command_dice)
+        self.__dado_label.pack()
         self.__canvas.bind("<Button-1>", self.print_checker)
         self.__last_clicked = None
 
@@ -192,14 +193,14 @@ class PlayerActor:
             self.__last_clicked = item
 
     def create_menu(self):
-        menubar = Menu(self.__tk)
-        filemenu = Menu(menubar, tearoff=0)
+        self.__menu = Menu(self.__tk)
+        filemenu = Menu(self.__menu, tearoff=0)
         filemenu.add_command(label="Iniciar jogo",
                              command=self.iniciar_jogo)
         filemenu.add_command(label="Restaurar estado inicial",
                              command=self.restaurar_estado_inicial)
-        menubar.add_cascade(label="Menu", menu=filemenu)
-        self.__tk.config(menu=menubar)
+        self.__menu.add_cascade(label="Menu", menu=filemenu)
+        self.__tk.config(menu=self.__menu)
 
     def restaurar_estado_inicial(self):
         print("Restaurar estado inicial não faz nada")
@@ -207,23 +208,19 @@ class PlayerActor:
     def iniciar_jogo(self):
         print("Iniciar jogo não faz nada")
 
-    def draw_dice_text(self, x, y):
-        label = Button(self.__tk, text="Jogue os dados", command=self.command_dice)
-        label.pack()
-
     def command_dice(self):
         print("Jogar dados")
 
     def draw_checkers_initial(self):
-        first_triangle_white = self.__triangle_canvas[0]
-        second_triangle_white = self.__triangle_canvas[11]
-        third_triangle_white = self.__triangle_canvas[16]
-        fourth_triangle_white = self.__triangle_canvas[18]
+        first_triangle_white = self.__posicoes[0]
+        second_triangle_white = self.__posicoes[11]
+        third_triangle_white = self.__posicoes[16]
+        fourth_triangle_white = self.__posicoes[18]
 
-        first_triangle_red = self.__triangle_canvas[23]
-        second_triangle_red = self.__triangle_canvas[12]
-        third_triangle_red = self.__triangle_canvas[7]
-        fourth_triangle_red = self.__triangle_canvas[5]
+        first_triangle_red = self.__posicoes[23]
+        second_triangle_red = self.__posicoes[12]
+        third_triangle_red = self.__posicoes[7]
+        fourth_triangle_red = self.__posicoes[5]
 
         for i in range(2):
             self.draw_checker(first_triangle_white, self.__white_color)
@@ -239,7 +236,7 @@ class PlayerActor:
             self.draw_checker(fourth_triangle_white, self.__white_color)
             self.draw_checker(fourth_triangle_red, self.__red_color)
 
-        for checker in self.__checker_canvas:
+        for checker in self.__pecas:
             checker.draw()
 
     def draw_checker(self, triangle: PosicaoCanvas, color: str):
@@ -248,10 +245,10 @@ class PlayerActor:
                                      self.__checker_size,
                                      color)
         triangle.add_checker(new_checker)
-        self.__checker_canvas.append(new_checker)
+        self.__pecas.append(new_checker)
 
     def draw_triangle(self, padding_x, padding_y):
-        self.__triangle_canvas.append(
+        self.__posicoes.append(
                 PosicaoCanvas(self.__canvas,
                                padding_x,
                                padding_y,
@@ -273,9 +270,9 @@ class PlayerActor:
             else:
                 color = self.__color_orange
             if (i < 12):
-                self.__triangle_canvas[i].draw(color)
+                self.__posicoes[i].draw(color)
             else:
-                self.__triangle_canvas[i].draw_reverse(color)
+                self.__posicoes[i].draw_reverse(color)
 
     def draw_checker_box(self, x, y, w, h):
         thickness = self.__thickness / 2
