@@ -4,11 +4,17 @@ from tkinter.ttk import *
 
 
 class DiceCanvas:
-    def __init__(self, x, y):
+    def __init__(self, canvas, x, y):
+        self.__canvas = canvas
         dice = ['\u2680', '\u2681', '\u2682', '\u2683', '\u2684', '\u2685']
         self.__canvas.create_text(x, y, text=dice[2],
                                   fill="black",
                                   font=('Helvetica 60 bold'))
+
+
+class CemiterioCanvas:
+    def __init__(self):
+        pass
 
 
 class PosicaoCanvas:
@@ -137,6 +143,8 @@ class PlayerActor:
                                   self.calculate_triangle_height() * 0.2)
         self.__checker_points_box_size = 100
         self.__dice_distance = 50
+        self.__cemiterio_brancas = CemiterioCanvas()
+        self.__cemiterio_vermelhas = CemiterioCanvas()
         self.__checker_between_padding = self.__checker_size * 0.8
         self.__checker_bottom_padding = self.__checker_size * 0.3
         self.draw_board_background()
@@ -153,10 +161,12 @@ class PlayerActor:
                               self.__thickness / 4,
                               self.__checker_points_box_size,
                               self.__checker_points_box_size)
-        self.__first_dice = DiceCanvas(self.__width + self.__checker_points_box_size +
+        self.__first_dice = DiceCanvas(self.__canvas,
+                                       self.__width + self.__checker_points_box_size +
                                        self.__dice_distance,
                                        self.__height / 2)
-        self.__second_dice = DiceCanvas(self.__width + self.__checker_points_box_size * 2 +
+        self.__second_dice = DiceCanvas(self.__canvas,
+                                        self.__width + self.__checker_points_box_size * 2 +
                                         self.__dice_distance,
                                         self.__height / 2)
         self.draw_dice_text(self.__width + self.__checker_points_box_size * 2,
