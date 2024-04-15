@@ -3,6 +3,14 @@ from tkinter import *
 from tkinter.ttk import *
 
 
+class DiceCanvas:
+    def __init__(self, x, y):
+        dice = ['\u2680', '\u2681', '\u2682', '\u2683', '\u2684', '\u2685']
+        self.__canvas.create_text(x, y, text=dice[2],
+                                  fill="black",
+                                  font=('Helvetica 60 bold'))
+
+
 class PosicaoCanvas:
     def __init__(self,
                  canvas: Canvas,
@@ -74,7 +82,7 @@ class PosicaoCanvas:
                     self.__checkers_in)
 
 
-class CheckersCanvas:
+class PecasCanvas:
     def __init__(self, canvas: Canvas,
                  padding_x: int,
                  padding_y: int,
@@ -123,7 +131,7 @@ class PlayerActor:
                                height=self.__height,
                                bg=self.__background_color)
         self.__triangle_canvas: [PosicaoCanvas] = []
-        self.__checker_canvas: [CheckersCanvas] = []
+        self.__checker_canvas: [PecasCanvas] = []
         self.__triangle_base = self.calculate_triangle_width()
         self.__checker_size = min(self.__triangle_base * 0.42,
                                   self.calculate_triangle_height() * 0.2)
@@ -189,12 +197,6 @@ class PlayerActor:
     def iniciar_jogo(self):
         print("Iniciar jogo não faz nada")
 
-    def draw_dice(self, x, y):
-        dice = ['\u2680', '\u2681', '\u2682', '\u2683', '\u2684', '\u2685']
-        self.__canvas.create_text(x, y, text=dice[2],
-                                  fill="black",
-                                  font=('Helvetica 60 bold'))
-
     def draw_dice_text(self, x, y):
         label = Button(self.__tk, text="Jogue os dados", command=self.command_dice)
         label.pack()
@@ -232,7 +234,7 @@ class PlayerActor:
 
     def draw_checker(self, triangle: PosicaoCanvas, color: str):
         (x, y) = triangle.get_checker_position()
-        new_checker = CheckersCanvas(self.__canvas, x, y,
+        new_checker = PecasCanvas(self.__canvas, x, y,
                                      self.__checker_size,
                                      color)
         triangle.add_checker(new_checker)
