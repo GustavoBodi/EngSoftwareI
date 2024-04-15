@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter.ttk import *
 
 
-class TriangleCanvas:
+class PosicaoCanvas:
     def __init__(self,
                  canvas: Canvas,
                  padding_x: int,
@@ -122,7 +122,7 @@ class PlayerActor:
                                width=self.__full_width,
                                height=self.__height,
                                bg=self.__background_color)
-        self.__triangle_canvas: [TriangleCanvas] = []
+        self.__triangle_canvas: [PosicaoCanvas] = []
         self.__checker_canvas: [CheckersCanvas] = []
         self.__triangle_base = self.calculate_triangle_width()
         self.__checker_size = min(self.__triangle_base * 0.42,
@@ -230,7 +230,7 @@ class PlayerActor:
         for checker in self.__checker_canvas:
             checker.draw()
 
-    def draw_checker(self, triangle: TriangleCanvas, color: str):
+    def draw_checker(self, triangle: PosicaoCanvas, color: str):
         (x, y) = triangle.get_checker_position()
         new_checker = CheckersCanvas(self.__canvas, x, y,
                                      self.__checker_size,
@@ -240,7 +240,7 @@ class PlayerActor:
 
     def draw_triangle(self, padding_x, padding_y):
         self.__triangle_canvas.append(
-                TriangleCanvas(self.__canvas,
+                PosicaoCanvas(self.__canvas,
                                padding_x,
                                padding_y,
                                self.__triangle_base,
@@ -356,7 +356,7 @@ class PlayerActor:
         return (self.__height - 2 * self.__padding - 2 * self.__thickness) \
                 * 0.35
 
-    def calculate_checkers_position(self, triangle: TriangleCanvas):
+    def calculate_checkers_position(self, triangle: PosicaoCanvas):
         (x, y) = triangle.get_checker_position()
         y -= 20
         return (x, y)
