@@ -153,12 +153,12 @@ class PlayerActor:
                               self.__thickness / 4,
                               self.__checker_points_box_size,
                               self.__checker_points_box_size)
-        self.draw_dice(self.__width + self.__checker_points_box_size +
-                       self.__dice_distance,
-                       self.__height / 2)
-        self.draw_dice(self.__width + self.__checker_points_box_size * 2 +
-                       self.__dice_distance,
-                       self.__height / 2)
+        self.__first_dice = DiceCanvas(self.__width + self.__checker_points_box_size +
+                                       self.__dice_distance,
+                                       self.__height / 2)
+        self.__second_dice = DiceCanvas(self.__width + self.__checker_points_box_size * 2 +
+                                        self.__dice_distance,
+                                        self.__height / 2)
         self.draw_dice_text(self.__width + self.__checker_points_box_size * 2,
                             self.__height / 2 + self.__dice_distance)
         self.__canvas.bind("<Button-1>", self.print_checker)
