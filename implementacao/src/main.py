@@ -1,7 +1,9 @@
-from tkinter import Tk, Canvas, Menu
+from tkinter import Tk, Canvas, Menu, messagebox
 from tkinter import *
 from tkinter.ttk import *
 
+from dog.dog_actor import DogActor
+from dog.dog_interface import DogPlayerInterface
 
 class DiceCanvas:
     def __init__(self, canvas, x, y):
@@ -112,7 +114,7 @@ class PecasCanvas:
                                  tag="checkers")
 
 
-class PlayerActor:
+class PlayerActor(DogPlayerInterface):
     def __init__(self):
         self.__tk = Tk()
         self.__tk.title("Gamão")
@@ -123,7 +125,7 @@ class PlayerActor:
         self.__thickness = 20
         self.__middle_line_thickness = 20 + self.__thickness
         self.__tk.geometry(f"{self.__full_width}x{self.__height}")
-        self.__tk.resizable(False, False)
+        self.__tk.resizable(True, True)
         self.__background_color = "#39573f"
         self.__color_green = "#45fc03"
         self.__white_color = "#FFFDFA"
@@ -136,8 +138,8 @@ class PlayerActor:
                                width=self.__full_width,
                                height=self.__height,
                                bg=self.__background_color)
-        self.__posicoes: [PosicaoCanvas] = []
-        self.__pecas: [PecasCanvas] = []
+        self.__posicoes: list[PosicaoCanvas] = []
+        self.__pecas: list[PecasCanvas] = []
         self.__triangle_base = self.calculate_triangle_width()
         self.__checker_size = min(self.__triangle_base * 0.42,
                                   self.calculate_triangle_height() * 0.2)
@@ -174,6 +176,8 @@ class PlayerActor:
         self.__dado_label.pack()
         self.__canvas.bind("<Button-1>", self.print_checker)
         self.__last_clicked = None
+        self.dog_actor = DogActor()
+        messagebox.showinfo(message=self.dog_actor.initialize("jogador_local", self))
 
     def print_checker(self, event):
         self.__canvas = event.widget
@@ -206,7 +210,7 @@ class PlayerActor:
         print("Restaurar estado inicial não faz nada")
 
     def iniciar_jogo(self):
-        print("Iniciar jogo não faz nada")
+        messagebox.showinfo(message=self.dog_actor.start_match(2).get_message())
 
     def command_dice(self):
         print("Jogar dados")
@@ -222,15 +226,15 @@ class PlayerActor:
         third_triangle_red = self.__posicoes[7]
         fourth_triangle_red = self.__posicoes[5]
 
-        for i in range(2):
+        for _ in range(2):
             self.draw_checker(first_triangle_white, self.__white_color)
             self.draw_checker(first_triangle_red, self.__red_color)
 
-        for i in range(3):
+        for _ in range(3):
             self.draw_checker(third_triangle_white, self.__white_color)
             self.draw_checker(third_triangle_red, self.__red_color)
 
-        for i in range(5):
+        for _ in range(5):
             self.draw_checker(second_triangle_white, self.__white_color)
             self.draw_checker(second_triangle_red, self.__red_color)
             self.draw_checker(fourth_triangle_white, self.__white_color)
@@ -287,7 +291,7 @@ class PlayerActor:
     def draw_triagles_right_bottom(self):
         padding_x = self.__width - self.__padding - self.__thickness
         padding_y = self.__height - self.__padding - self.__thickness
-        for i in range(6):
+        for _ in range(6):
             padding_x -= self.__triangle_base
             self.draw_triangle(padding_x, padding_y)
 
@@ -295,14 +299,14 @@ class PlayerActor:
         padding_x = self.__padding + self.__thickness + \
                     self.__triangle_base * 6
         padding_y = self.__height - self.__padding - self.__thickness
-        for i in range(6):
+        for _ in range(6):
             padding_x -= self.__triangle_base
             self.draw_triangle(padding_x, padding_y)
 
     def draw_triangles_left_top(self):
         padding_x = self.__padding + self.__thickness
         padding_y = self.__padding + self.__thickness
-        for i in range(6):
+        for _ in range(6):
             self.draw_triangle(padding_x, padding_y)
             padding_x += self.__triangle_base
 
@@ -310,7 +314,7 @@ class PlayerActor:
         padding_x = self.__width - self.__padding - self.__thickness - \
                     self.__triangle_base * 6
         padding_y = self.__padding + self.__thickness
-        for i in range(6):
+        for _ in range(6):
             self.draw_triangle(padding_x, padding_y)
             padding_x += self.__triangle_base
 
@@ -361,7 +365,7 @@ class PlayerActor:
                 - 2 * self.__thickness - self.__middle_line_thickness
         return space / 12
 
-    def calculate_triangle_height(self) -> int:
+    def calculate_triangle_height(self) -> float:
         return (self.__height - 2 * self.__padding - 2 * self.__thickness) \
                 * 0.35
 
@@ -373,6 +377,8 @@ class PlayerActor:
     def mainloop(self):
         self.__tk.mainloop()
 
+    def receive_start(self, start_status):
+        messagebox.showinfo(message=start_status.get_message())
 
 if __name__ == "__main__":
     player = PlayerActor()
