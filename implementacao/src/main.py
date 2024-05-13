@@ -1,4 +1,4 @@
-from tkinter import Tk, Canvas, Menu, messagebox
+from tkinter import Tk, Canvas, Menu, messagebox, simpledialog
 from tkinter import *
 from tkinter.ttk import *
 
@@ -176,8 +176,10 @@ class PlayerActor(DogPlayerInterface):
         self.__dado_label.pack()
         self.__canvas.bind("<Button-1>", self.print_checker)
         self.__last_clicked = None
+
+        player_name = simpledialog.askstring(title="Player identification", prompt="Qual o seu nome?")
         self.dog_actor = DogActor()
-        messagebox.showinfo(message=self.dog_actor.initialize("jogador_local", self))
+        messagebox.showinfo(message=self.dog_actor.initialize(player_name, self))
 
     def print_checker(self, event):
         self.__canvas = event.widget
