@@ -33,7 +33,32 @@ class Tabuleiro:
         raise NotImplementedError()
 
     def avaliarMovimento(self, peca: Peca, posicao: int, dado: int) -> bool:
-        raise NotImplementedError()
+        jogador = self.identificaJogadorTurno()
+        alcalcavel = self.alcancavelDados(peca, posicao, dado)
+        sentido = jogador.sentidoPontuacao(peca, posicao)
+        if alcalcavel and sentido:
+            quantidade = self.__linhaTabuleiro.pecasAdversario(posicao, jogador.obterCorAdversario())
+
+            if quantidade == 1:
+                self.__linhaTabuleiro.marcarRemovida(peca)
+                self.movimentoRegular()
+                return True
+            elif quantidade == 0:
+                if posicao == 24:
+                    sairam = self.__linhaTabuleiro.pecasSairam(jogador)
+                    if sairam:
+                        self.marcarPontoJogador(jogador)
+                        self.movimentoRegular()
+                        return True
+                    else:
+                        self.colocaMovimentoIrregular()
+                        return False
+                else:
+                    self.movimentoRegular()
+                    return True
+
+        self.colocaMovimentoIrregular()
+        return False
 
     def avaliarPossibilidadeTurno(self) -> bool:
         raise NotImplementedError()

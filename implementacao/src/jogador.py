@@ -80,3 +80,6 @@ class Jogador:
 
     def obterCor(self) -> int:
         raise NotImplementedError()
+
+    def obterCorAdversario(self) -> int:
+        raise NotImplementedError()
