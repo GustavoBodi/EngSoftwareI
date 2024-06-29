@@ -9,7 +9,9 @@ class Dado:
         self.__valores.clear()
 
     def gerarNumero(self) -> int:
-        choice(range(1, 7, 1))
+        num = choice(range(1, 7, 1))
+        self.__valores.append(num)
+        return num
 
     def duplicarDados(self) -> None:
         temp = []

@@ -3,6 +3,7 @@ from dado import Dado
 from jogador import Jogador
 from linhaTabuleiro import LinhaTabuleiro
 from peca import Peca
+from main import PlayerInterface
 
 class Tabuleiro:
     def __init__(self) -> None:
@@ -12,6 +13,8 @@ class Tabuleiro:
         self.__estadoPartida: int = 0
         self.__dados: Dado = Dado()
         self.__match_status: int = 0
+        self.__jogadorLocal: Jogador
+        self.__playerInterface: PlayerInterface
 
     def __inicializar(self, simbolo: int, id: str, nome: str) -> None:
         raise NotImplementedError()
@@ -65,7 +68,22 @@ class Tabuleiro:
         raise NotImplementedError()
 
     def jogarDados(self) -> None:
-        raise NotImplementedError()
+        self.__dados.zerarDados()
+        valor1 = self.__dados.gerarNumero()
+        valor2 = self.__dados.gerarNumero()
+
+        if valor1 == valor2:
+            self.__dados.duplicarDados()
+
+        movimentoPossivel = self.__jogadorLocal.avaliarPossibilidadeTurno()
+
+        if movimentoPossivel:
+            self.__jogadorLocal.definirTurnoPossivel()
+            self.registrarDados()
+            valores = self.__dados.obterValores()
+            self.__playerInterface.atualizarDados(valores)
+        else:
+            self.__jogadorLocal.definirTurnoTerminado()
 
     def limparTabuleiro(self) -> None:
         raise NotImplementedError()

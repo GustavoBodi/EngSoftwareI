@@ -13,6 +13,8 @@ class DiceCanvas:
                                   fill="black",
                                   font=('Helvetica 60 bold'))
 
+    def atualizarDado(self, dado: int, duplicado: bool) -> None:
+        raise NotImplementedError()
 
 class CemiterioCanvas:
     def __init__(self):
@@ -114,7 +116,7 @@ class PecasCanvas:
                                  tag="checkers")
 
 
-class PlayerActor(DogPlayerInterface):
+class PlayerInterface(DogPlayerInterface):
     def __init__(self):
         self.__tk = Tk()
         self.__tk.title("Gamão")
@@ -382,7 +384,16 @@ class PlayerActor(DogPlayerInterface):
     def receive_start(self, start_status):
         messagebox.showinfo(message=start_status.get_message())
 
+    def atualizarDados(self, dados: list[int]) -> None:
+        duplicado = len(dados) > 2
+        if not duplicado:
+            self.__primeiro_dado.atualizarDado(dados[0], duplicado)
+            self.__segundo_dado.atualizarDado(dados[1], duplicado)
+        else:
+            self.__primeiro_dado.atualizarDado(dados[0], duplicado)
+            self.__segundo_dado.atualizarDado(dados[0], duplicado)
+
 if __name__ == "__main__":
-    player = PlayerActor()
+    player = PlayerInterface()
     player.create()
     player.mainloop()
