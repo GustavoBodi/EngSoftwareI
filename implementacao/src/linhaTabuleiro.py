@@ -74,8 +74,16 @@ class LinhaTabuleiro:
     def removerPecaTabuleiro(self, peca: Peca) -> None:
         self.retirarPecaTabuleiro(peca)
 
+    def obterPecas(self, posicao: int) -> list[Peca]:
+        return self.__posicoes[posicao].obterOcupantes()
+
     def obterPosicoes(self) -> list[Posicao]:
         return self.__posicoes
+
+    def obterPosicao(self, peca: Peca) -> int:
+        for i, posicao in enumerate(self.__posicoes):
+            if peca in posicao.obterOcupantes():
+                return i
 
     def obterPecasRemovidas(self) -> list[Peca]:
         return self.__retiradas
