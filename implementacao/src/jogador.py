@@ -68,5 +68,5 @@ class Jogador:
     def inicializar(self, nome: str, cor: int, identificador: str) -> None:
         raise NotImplementedError()
 
-    def obetrCor(self) -> int:
+    def obterCor(self) -> int:
         raise NotImplementedError()

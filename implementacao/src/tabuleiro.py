@@ -5,6 +5,7 @@ from linhaTabuleiro import LinhaTabuleiro
 from peca import Peca
 from main import PlayerInterface
 
+
 class Tabuleiro:
     def __init__(self) -> None:
         self.__partidaEmAndamento: bool = False

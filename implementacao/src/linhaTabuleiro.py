@@ -21,42 +21,61 @@ class LinhaTabuleiro:
         for i in range(quantidade):
             peca = Peca(jogador)
             pecas_retorno.append(peca)
-            self.__posicoes[posicao].adicionarOcupante(peca)
+            self.adicionarPeca(peca, posicao)
         return pecas_retorno
 
     def moverPeca(self, peca: Peca, posicao: int) -> None:
-        for pos in self.__posicoes:
-            pecas = pos.obterOcupantes()
+        self.removerPeca(peca)
+        self.__posicoes[posicao].adicionarOcupante(peca)
 
     def retirarPecaTabuleiro(self, peca: Peca) -> None:
-        raise NotImplementedError()
+        self.removerPeca(peca)
+        self.__removida.append(peca)
 
-    def removerPeca(self, peca: Peca) -> None:
-        raise NotImplementedError()
+    def removerPeca(self, peca: Peca) -> int:
+        for pos in self.__posicoes:
+            pecas = pos.obterOcupantes()
+            if (peca in pecas):
+                pecas.remove(peca)
+                break
 
     def moverForaTabuleiro(self, peca: Peca) -> None:
-        raise NotImplementedError()
+        self.retirarPecaTabuleiro(peca)
 
     def matarPeca(self, peca: Peca) -> None:
-        raise NotImplementedError()
+        self.retirarPecaTabuleiro(peca)
+        if peca.vermelha():
+            self.__cemiterio_vermelhas.adicionarPeca(peca)
+        else:
+            self.__cemiterio_brancas.adicionarPeca(peca)
 
     def pecasAdversario(self, posicao: int, adversario: int) -> int:
-        raise NotImplementedError()
+        pos: Posicao = self.__posicoes[posicao]
+        pecas: list[Peca] = pos.obterOcupantes()
+        if (pecas[0].vermelha() and adversario == 1) or (pecas[0].branca() and adversario == 0):
+            return len(pecas)
+        return 0
 
     def marcarRemovida(self, peca: Peca) -> None:
         self.__removida = peca
 
     def pecasSairam(self, jogador: Jogador) -> bool:
-        raise NotImplementedError()
+        cor: int = jogador.obterCor()
+        for peca in self.__retiradas:
+            if peca.branca() and cor == 0:
+                return True
+            if peca.vermelha() and cor == 1:
+                return True
+        return False
 
     def adicionarPeca(self, peca: Peca, posicao: int) -> None:
-        raise NotImplementedError()
+        self.__posicoes[posicao].adicionarOcupante(peca)
 
     def removerPecaTabuleiro(self, peca: Peca) -> None:
-        raise NotImplementedError()
+        self.retirarPecaTabuleiro(peca)
 
     def obterPosicoes(self) -> list[Posicao]:
-        raise NotImplementedError()
+        return self.__posicoes
 
     def obterPecasRemovidas(self) -> list[Peca]:
-        raise NotImplementedError()
+        return self.__retiradas

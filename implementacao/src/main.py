@@ -5,6 +5,7 @@ from tkinter.ttk import *
 from dog.dog_actor import DogActor
 from dog.dog_interface import DogPlayerInterface
 
+
 class DiceCanvas:
     def __init__(self, canvas, x, y):
         self.__canvas = canvas
@@ -13,8 +14,14 @@ class DiceCanvas:
                                   fill="black",
                                   font=('Helvetica 60 bold'))
 
+<<<<<<< Updated upstream
     def atualizarDado(self, dado: int, duplicado: bool) -> None:
         raise NotImplementedError()
+=======
+    def update(self, valore: list[int]):
+        pass
+
+>>>>>>> Stashed changes
 
 class CemiterioCanvas:
     def __init__(self):
