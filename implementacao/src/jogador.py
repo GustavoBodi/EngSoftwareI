@@ -5,9 +5,11 @@ from tabuleiro import Tabuleiro
 
 
 class Jogador:
-    def __init__(self, tabuleiro: Tabuleiro, linhaTabuleiro: LinhaTabuleiro, dado: Dado) -> None:
-        self.__nome: str = ""
-        self.__cor: int = 0
+    def __init__(self, tabuleiro: Tabuleiro, linhaTabuleiro: LinhaTabuleiro,
+                 dado: Dado, nome: str, cor: int, identificador: str) -> None:
+        self.__nome: str = nome
+        self.__cor: int = cor
+        self.__identificador: str = identificador
         self.__seuTurno: bool = False
         self.__vencedor: bool = False
         self.__turnoPossivel: bool = False
@@ -26,17 +28,14 @@ class Jogador:
             elif pecas[0].vermelha() and self.obterCor() == 1:
                 return False
 
-    def registraPosicao(self, posicao: int) -> None:
-        raise NotImplementedError()
+    # def registraPosicao(self, posicao: int) -> None:
+    #     raise NotImplementedError()
 
     def definirTurnoPossivel(self) -> None:
         self.__turnoPossivel = True
 
     def definirTurnoTerminado(self) -> None:
         self.__seuTurno = False
-
-    def inicializar(self) -> None:
-        raise NotImplementedError()
 
     def habilitaTurno(self) -> None:
         self.__seuTurno = True
@@ -79,8 +78,8 @@ class Jogador:
     def atribuirPecas(self, pecas: list[Peca]) -> None:
         self.__pecas = pecas
 
-    def obterValorMovimento(self) -> None:
-        raise NotImplementedError()
+    # def obterValorMovimento(self) -> None:
+    #     raise NotImplementedError()
 
     def acabaramPecas(self) -> bool:
         pecas_removidas = self.__linhaTabuleiro.obterPecasRemovidas()
@@ -102,9 +101,6 @@ class Jogador:
         elif posicao_atual < posicao and self.obterCor() == 1:
             return True
         return False
-
-    def inicializar(self, nome: str, cor: int, identificador: str) -> None:
-        raise NotImplementedError()
 
     def obterCor(self) -> int:
         return self.__cor
