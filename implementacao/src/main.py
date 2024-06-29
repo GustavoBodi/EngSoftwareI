@@ -14,14 +14,12 @@ class DiceCanvas:
                                   fill="black",
                                   font=('Helvetica 60 bold'))
 
-<<<<<<< Updated upstream
     def atualizarDado(self, dado: int, duplicado: bool) -> None:
         raise NotImplementedError()
-=======
+
     def update(self, valore: list[int]):
         pass
 
->>>>>>> Stashed changes
 
 class CemiterioCanvas:
     def __init__(self):
