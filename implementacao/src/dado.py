@@ -1,21 +1,28 @@
+from random import choice
+
+
 class Dado:
     def __init__(self) -> None:
         self.__valores: list[int] = []
 
     def zerarDados(self) -> None:
-        raise NotImplementedError()
+        self.__valores.clear()
 
     def gerarNumero(self) -> int:
-        raise NotImplementedError()
+        choice(range(1, 7, 1))
 
     def duplicarDados(self) -> None:
-        raise NotImplementedError()
+        temp = []
+        for dado in self.__valores:
+            temp.append(dado)
+        for dado in temp:
+            self.__valores.append(dado)
 
     def removerDado(self, valor: int) -> None:
-        raise NotImplementedError()
+        self.__valores.remove(valor)
 
     def atualizarDadoInterface(self) -> None:
         raise NotImplementedError()
 
     def obterValores(self) -> list[int]:
-        raise NotImplementedError()
+        return self.__valores

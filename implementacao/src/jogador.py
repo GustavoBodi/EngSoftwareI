@@ -1,7 +1,9 @@
 from peca import Peca
+from linhaTabuleiro import LinhaTabuleiro
+
 
 class Jogador:
-    def __init__(self) -> None:
+    def __init__(self, linhaTabuleiro: LinhaTabuleiro) -> None:
         self.__nome: str = ""
         self.__cor: int = 0
         self.__seuTurno: bool = False
@@ -10,6 +12,7 @@ class Jogador:
         self.__pecas: list[Peca] = []
         self.__valorMovimento: int = 0
         self.__sentido: bool = False
+        self.__linhaTabuleiro: LinhaTabuleiro = linhaTabuleiro
 
     def suaPosicao(self, posicao: int) -> bool:
         raise NotImplementedError()

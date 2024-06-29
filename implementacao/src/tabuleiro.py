@@ -7,8 +7,6 @@ from peca import Peca
 class Tabuleiro:
     def __init__(self) -> None:
         self.__partidaEmAndamento: bool = False
-        self.__cemiterioBrancas: Cemiterio = Cemiterio()
-        self.__cemiterioVermelhas: Cemiterio = Cemiterio()
         self.__linhaTabuleiro: LinhaTabuleiro = LinhaTabuleiro()
         self.__pecas: list[Peca] = []
         self.__estadoPartida: int = 0
