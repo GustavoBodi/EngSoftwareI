@@ -1,9 +1,7 @@
-from tkinter import Tk, Canvas, Menu, messagebox, simpledialog
+from tkinter import Tk, Canvas, Menu
 from tkinter import *
 from tkinter.ttk import *
 
-from dog.dog_actor import DogActor
-from dog.dog_interface import DogPlayerInterface
 
 class DiceCanvas:
     def __init__(self, canvas, x, y):
@@ -13,11 +11,74 @@ class DiceCanvas:
                                   fill="black",
                                   font=('Helvetica 60 bold'))
 
-
 class CemiterioCanvas:
-    def __init__(self):
-        pass
+    def __init__(self,
+                canvas: Canvas,
+                 padding_x: int,
+                 padding_y: int,
+                 base: int,
+                 height: int,
+                 ):
+        self._canvas = canvas
+        self._padding_x = padding_x
+        self._padding_y = padding_y
+        self.__base = base
+        self.__height = height
+        self.__checkers = []
+        self.__reverse = False
+        self.draw()
 
+    def draw(self, color: str = "white"):
+        x = self._padding_x
+        y = self._padding_y
+        size = self.__height
+        x1 = x
+        y1 = y
+        x2 = x + self.__base
+        y2 = y
+        x3 = x + self.__base / 2
+        y3 = y - size
+        points = [x1, y1, x2, y2]
+        self._canvas.create_rectangle(points, fill=color)
+
+    def draw_reverse(self, color: str = "red"):
+        x = self._padding_x
+        y = self._padding_y
+        size = self.__height
+        x1 = x
+        y1 = y
+        x2 = x + self.__base
+        y2 = y
+        x3 = x + self.__base / 2
+        y3 = y - size
+        points = [x1, y1, x2, y2]
+        self._canvas.create_rectangle(points, fill=color)
+        self.__reverse = True
+
+    def add_checker(self, color: str):
+        x, y = self.offset(len(self.__checkers))
+        new_checker = PecasCanvas(self._canvas, x, y, self.__height / 10, color)
+        self.__checkers.append(new_checker)
+        new_checker.draw()
+        self.update()
+
+    def remove_checker(self):
+        if self.__checkers:
+            checker = self.__checkers.pop()
+            self._canvas.delete(checker)
+            self.update()
+
+    def offset(self, index):
+        x = self.__padding_x + self.__base / 2
+        y = self.__padding_y - index * (self.__height / 10 + 5)
+        return x, y
+
+    def update(self):
+        self.__canvas.create_text(self.__x + self.__width / 2,
+                                  self.__y + self.__height / 2,
+                                  text=str(self.__checkers),
+                                  fill="black",
+                                  font=('Helvetica 15 bold'))
 
 class PosicaoCanvas:
     def __init__(self,
@@ -114,10 +175,10 @@ class PecasCanvas:
                                  tag="checkers")
 
 
-class PlayerActor(DogPlayerInterface):
+class PlayerActor:
     def __init__(self):
         self.__tk = Tk()
-        self.__tk.title("Gamão")
+        self.__tk.title("GamÃ£o")
         self.__width = 1500
         self.__full_width = self.__width + 400
         self.__height = 900
@@ -125,7 +186,7 @@ class PlayerActor(DogPlayerInterface):
         self.__thickness = 20
         self.__middle_line_thickness = 20 + self.__thickness
         self.__tk.geometry(f"{self.__full_width}x{self.__height}")
-        self.__tk.resizable(True, True)
+        self.__tk.resizable(False, False)
         self.__background_color = "#39573f"
         self.__color_green = "#45fc03"
         self.__white_color = "#FFFDFA"
@@ -138,15 +199,28 @@ class PlayerActor(DogPlayerInterface):
                                width=self.__full_width,
                                height=self.__height,
                                bg=self.__background_color)
-        self.__posicoes: list[PosicaoCanvas] = []
-        self.__pecas: list[PecasCanvas] = []
+        self.__posicoes: [PosicaoCanvas] = []
+        self.__pecas: [PecasCanvas] = []
         self.__triangle_base = self.calculate_triangle_width()
         self.__checker_size = min(self.__triangle_base * 0.42,
                                   self.calculate_triangle_height() * 0.2)
         self.__checker_points_box_size = 100
         self.__dice_distance = 50
-        self.__cemiterio_brancas = CemiterioCanvas()
-        self.__cemiterio_vermelhas = CemiterioCanvas()
+        self.__cemiterio_brancas = CemiterioCanvas(self.__canvas,
+                                           self.__width - self.__padding,
+                                           self.__padding + self.__checker_points_box_size + 10,
+                                           self.__checker_points_box_size,
+                                           self.__checker_points_box_size)
+
+        self.__cemiterio_vermelhas = CemiterioCanvas(self.__canvas,
+                                             self.__width - self.__padding,
+                                             self.__height - self.__padding -
+                                             self.__checker_points_box_size -
+                                             self.__thickness / 4 - 10 -
+                                             self.__checker_points_box_size,
+                                             self.__checker_points_box_size,
+                                             self.__checker_points_box_size)
+        
         self.__checker_between_padding = self.__checker_size * 0.8
         self.__checker_bottom_padding = self.__checker_size * 0.3
         self.draw_board_background()
@@ -176,10 +250,8 @@ class PlayerActor(DogPlayerInterface):
         self.__dado_label.pack()
         self.__canvas.bind("<Button-1>", self.print_checker)
         self.__last_clicked = None
-
-        player_name = simpledialog.askstring(title="Player identification", prompt="Qual o seu nome?")
-        self.dog_actor = DogActor()
-        messagebox.showinfo(message=self.dog_actor.initialize(player_name, self))
+        self.__apagar_button = Button(self.__tk, text="Apagar Canvas", command=self.apagar_canvas)
+        self.__apagar_button.pack()
 
     def print_checker(self, event):
         self.__canvas = event.widget
@@ -204,15 +276,15 @@ class PlayerActor(DogPlayerInterface):
         filemenu.add_command(label="Iniciar jogo",
                              command=self.iniciar_jogo)
         filemenu.add_command(label="Restaurar estado inicial",
-                             command=self.restaurar_estado_inicial)
+                             command=self.apagar_canvas)
         self.__menu.add_cascade(label="Menu", menu=filemenu)
         self.__tk.config(menu=self.__menu)
 
     def restaurar_estado_inicial(self):
-        print("Restaurar estado inicial não faz nada")
+        print("Restaurar estado inicial nÃ£o faz nada")
 
     def iniciar_jogo(self):
-        messagebox.showinfo(message=self.dog_actor.start_match(2).get_message())
+        print("Iniciar jogo nÃ£o faz nada")
 
     def command_dice(self):
         print("Jogar dados")
@@ -228,15 +300,15 @@ class PlayerActor(DogPlayerInterface):
         third_triangle_red = self.__posicoes[7]
         fourth_triangle_red = self.__posicoes[5]
 
-        for _ in range(2):
+        for i in range(2):
             self.draw_checker(first_triangle_white, self.__white_color)
             self.draw_checker(first_triangle_red, self.__red_color)
 
-        for _ in range(3):
+        for i in range(3):
             self.draw_checker(third_triangle_white, self.__white_color)
             self.draw_checker(third_triangle_red, self.__red_color)
 
-        for _ in range(5):
+        for i in range(5):
             self.draw_checker(second_triangle_white, self.__white_color)
             self.draw_checker(second_triangle_red, self.__red_color)
             self.draw_checker(fourth_triangle_white, self.__white_color)
@@ -293,7 +365,7 @@ class PlayerActor(DogPlayerInterface):
     def draw_triagles_right_bottom(self):
         padding_x = self.__width - self.__padding - self.__thickness
         padding_y = self.__height - self.__padding - self.__thickness
-        for _ in range(6):
+        for i in range(6):
             padding_x -= self.__triangle_base
             self.draw_triangle(padding_x, padding_y)
 
@@ -301,14 +373,14 @@ class PlayerActor(DogPlayerInterface):
         padding_x = self.__padding + self.__thickness + \
                     self.__triangle_base * 6
         padding_y = self.__height - self.__padding - self.__thickness
-        for _ in range(6):
+        for i in range(6):
             padding_x -= self.__triangle_base
             self.draw_triangle(padding_x, padding_y)
 
     def draw_triangles_left_top(self):
         padding_x = self.__padding + self.__thickness
         padding_y = self.__padding + self.__thickness
-        for _ in range(6):
+        for i in range(6):
             self.draw_triangle(padding_x, padding_y)
             padding_x += self.__triangle_base
 
@@ -316,7 +388,7 @@ class PlayerActor(DogPlayerInterface):
         padding_x = self.__width - self.__padding - self.__thickness - \
                     self.__triangle_base * 6
         padding_y = self.__padding + self.__thickness
-        for _ in range(6):
+        for i in range(6):
             self.draw_triangle(padding_x, padding_y)
             padding_x += self.__triangle_base
 
@@ -357,6 +429,12 @@ class PlayerActor(DogPlayerInterface):
                                        self.__width - padding,
                                        self.__height - padding,
                                        fill=self.__board_background_color)
+        
+    def add_checker_to_cemiterio(self, color: str):
+        if color == "white":
+            self.__cemiterio_brancas.add_checker(color)
+        elif color == "red":
+            self.__cemiterio_vermelhas.add_checker(color)
 
     def create(self):
         self.__canvas.pack()
@@ -367,7 +445,7 @@ class PlayerActor(DogPlayerInterface):
                 - 2 * self.__thickness - self.__middle_line_thickness
         return space / 12
 
-    def calculate_triangle_height(self) -> float:
+    def calculate_triangle_height(self) -> int:
         return (self.__height - 2 * self.__padding - 2 * self.__thickness) \
                 * 0.35
 
@@ -375,12 +453,55 @@ class PlayerActor(DogPlayerInterface):
         (x, y) = triangle.get_checker_position()
         y -= 20
         return (x, y)
+    
+    def apagar_canvas(self):
+        self.__canvas.delete("all")
+        self.__posicoes.clear()
+        self.__pecas.clear()
+
+        self.__cemiterio_brancas = CemiterioCanvas(self.__canvas,
+                                                   self.__width - self.__padding,
+                                                   self.__padding + self.__checker_points_box_size + 10,
+                                                   self.__checker_points_box_size,
+                                                   self.__checker_points_box_size)
+
+        self.__cemiterio_vermelhas = CemiterioCanvas(self.__canvas,
+                                                     self.__width - self.__padding,
+                                                     self.__height - self.__padding -
+                                                     self.__checker_points_box_size -
+                                                     self.__thickness / 4 - 10 -
+                                                     self.__checker_points_box_size,
+                                                     self.__checker_points_box_size,
+                                                     self.__checker_points_box_size)
+        
+        self.draw_board_background()
+        self.draw_board_border()
+        self.draw_triangles()
+        self.draw_checkers_initial()
+        self.draw_checker_box(self.__width - self.__padding,
+                              self.__padding, self.__checker_points_box_size,
+                              self.__checker_points_box_size)
+        self.draw_checker_box(self.__width - self.__padding,
+                              self.__height - self.__padding -
+                              self.__checker_points_box_size -
+                              self.__thickness / 4,
+                              self.__checker_points_box_size,
+                              self.__checker_points_box_size)
+
+        self.__primeiro_dado = DiceCanvas(self.__canvas,
+                                          self.__width + self.__checker_points_box_size +
+                                          self.__dice_distance,
+                                          self.__height / 2)
+        self.__segundo_dado = DiceCanvas(self.__canvas,
+                                         self.__width + self.__checker_points_box_size * 2 +
+                                         self.__dice_distance,
+                                         self.__height / 2)
+        
+        print("tabuleiro resetado")
 
     def mainloop(self):
         self.__tk.mainloop()
 
-    def receive_start(self, start_status):
-        messagebox.showinfo(message=start_status.get_message())
 
 if __name__ == "__main__":
     player = PlayerActor()
