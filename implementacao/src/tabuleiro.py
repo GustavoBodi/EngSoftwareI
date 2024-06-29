@@ -108,7 +108,7 @@ class Tabuleiro:
         raise NotImplementedError()
 
     def obterDado(self) -> list[int]:
-        raise NotImplementedError()
+        return self.__dados.obterValores()
 
     def obterEstadoJogo(self) -> dict:
         raise NotImplementedError()
