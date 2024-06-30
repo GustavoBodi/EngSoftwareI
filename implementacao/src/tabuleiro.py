@@ -22,13 +22,18 @@ class Tabuleiro:
         self.__playerInterface: PlayerInterface = PlayerInterface()
 
         self.__partidaEmAndamento: bool = False
+        self.__movimento = {}
         self.__movimentoRegular: bool = False
         self.__turnoPossivel: bool = False
         self.__movimentoOcorrendo: bool = False
         self.__esperando: bool = False
 
-    def __inicializar(self, simbolo: int, id: str, nome: str) -> None:
-        self.__playerInterface = PlayerInterface()
+    def __inicializar(self, simbolo: int, id: str, nome: str, cor: int) -> None:
+        self.__jogadorLocal = Jogador(self, self.__linhaTabuleiro,
+                                      self.__dados,
+                                      nome,
+                                      cor,
+                                      id)
 
     def adicionarPeca(self, peca: Peca, posicao: int) -> None:
         self.__linhaTabuleiro.adicionarPeca(peca, posicao)
@@ -89,11 +94,11 @@ class Tabuleiro:
     def colocarEsperando(self) -> None:
         self.__esperando = True
 
-    def comecar_partida(self, jogadores: list[str], idJogadorLocal: str) -> None:
-        raise NotImplementedError()
+    # def comecar_partida(self, jogadores: list[str], idJogadorLocal: str) -> None:
+    #     raise NotImplementedError()
 
     def definirMovimento(self) -> None:
-        raise NotImplementedError()
+        self.__movimento.clear()
 
     def definirTurnoPossivel(self) -> None:
         self.__turnoPossivel = True
@@ -136,11 +141,10 @@ class Tabuleiro:
         self.__partidaEmAndamento = False
 
     def marcarMovimento(self, estado: str) -> None:
-        raise NotImplementedError()
+        self.__movimento['state'] = estado
 
     def marcarTerminado(self) -> None:
-        # self.__partidaEmAndamento = False
-        pass
+        self.__movimento['state'] = "finished"
 
     def movimentoOcorrendo(self) -> bool:
         self.__movimentoOcorrendo = True

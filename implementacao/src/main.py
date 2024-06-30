@@ -525,6 +525,7 @@ class PlayerInterface(DogPlayerInterface):
             self.__primeiro_dado.atualizarDado(dados[0], duplicado)
             self.__segundo_dado.atualizarDado(dados[0], duplicado)
 
+
 if __name__ == "__main__":
     player = PlayerInterface()
     player.create()
