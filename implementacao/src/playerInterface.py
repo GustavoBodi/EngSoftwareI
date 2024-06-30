@@ -409,4 +409,9 @@ class PlayerInterface(DogPlayerInterface):
 
     def selecionarDestino(self, posicao) -> None:
         self.__tabuleiro.definirMovimento()
-        movimentoPossivel = self.__tabuleiro.avaliarMovimento(posicao, self.__tabuleiro.obterDados())
+        (movimentoPossivel, destino) = self.__tabuleiro.avaliarMovimento(posicao, self.__tabuleiro.obterDados())
+        if movimentoPossivel:
+            if destino == 0:
+                self.__tabuleiro.removerPeca()
+            elif destino == 1:
+            else:

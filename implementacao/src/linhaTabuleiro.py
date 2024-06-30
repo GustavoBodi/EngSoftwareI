@@ -40,11 +40,7 @@ class LinhaTabuleiro:
             elif peca.branca():
                 self.__cemiterio_brancas.adicionarPeca(peca)
 
-    def retirarPecaTabuleiro(self, peca: Peca) -> None:
-        self.removerPeca(peca)
-        self.__removida.append(peca)
-
-    def removerPeca(self, peca: Peca) -> int:
+    def removerPeca(self, peca: Peca) -> None:
         for pos in self.__posicoes:
             pecas = pos.obterOcupantes()
             if (peca in pecas):
@@ -55,9 +51,6 @@ class LinhaTabuleiro:
         if peca in self.__cemiterio_brancas.obterPecas():
             self.__cemiterio_brancas.removerPeca(peca)
 
-    def moverForaTabuleiro(self, peca: Peca) -> None:
-        self.retirarPecaTabuleiro(peca)
-
     def obterPecasCemiterioVermelho(self) -> list[Peca]:
         return self.__cemiterio_vermelhas.obterPecas()
 
@@ -65,11 +58,7 @@ class LinhaTabuleiro:
         return self.__cemiterio_brancas.obterPecas()
 
     def matarPeca(self, peca: Peca) -> None:
-        self.removerPeca(peca)
-        if peca.vermelha():
-            self.__cemiterio_vermelhas.adicionarPeca(peca)
-        else:
-            self.__cemiterio_brancas.adicionarPeca(peca)
+        self.moverPeca(peca, 25)
 
     def pecasJogador(self, posicao: int, jogador: int) -> int:
         pecas = self.__posicoes[posicao].obterOcupantes()
@@ -108,9 +97,6 @@ class LinhaTabuleiro:
 
     def adicionarPeca(self, peca: Peca, posicao: int) -> None:
         self.__posicoes[posicao].adicionarOcupante(peca)
-
-    def removerPecaTabuleiro(self, peca: Peca) -> None:
-        self.retirarPecaTabuleiro(peca)
 
     def obterPecas(self, posicao: int) -> list[Peca]:
         return self.__posicoes[posicao].obterOcupantes()

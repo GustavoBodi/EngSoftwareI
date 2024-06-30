@@ -38,9 +38,6 @@ class Tabuleiro:
     def adicionarPeca(self, peca: Peca, posicao: int) -> None:
         self.__linhaTabuleiro.adicionarPeca(peca, posicao)
 
-    def adicionarPecaForaTabuleiro(self, peca: Peca) -> None:
-        self.__linhaTabuleiro.removerPecaTabuleiro(peca)
-
     def alcancavelDados(self, peca: int, posicao: int, dado: int) -> bool:
         return peca + dado == posicao or peca - dado == posicao
 
@@ -209,7 +206,7 @@ class Tabuleiro:
         for (peca, pos_final) in movimento['posicoes']:
             self.__linhaTabuleiro.moverPeca(peca, pos_final)
         for peca in movimento['fora_tabuleiro']:
-            self.__linhaTabuleiro.retirarPecaTabuleiro(peca)
+            self.__linhaTabuleiro.removerPeca(peca)
         for (peca, cemiterio) in movimento['mortas']:
             self.__linhaTabuleiro.matarPeca(peca)
 
