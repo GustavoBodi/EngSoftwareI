@@ -71,10 +71,9 @@ class LinhaTabuleiro:
         else:
             self.__cemiterio_brancas.adicionarPeca(peca)
 
-    def pecasAdversario(self, posicao: int, adversario: Jogador) -> int:
-        pos: Posicao = self.__posicoes[posicao]
-        pecas: list[Peca] = pos.obterOcupantes()
-        if (pecas[0].obterCor() == adversario.obterCor()):
+    def pecasJogador(self, posicao: int, jogador: int) -> int:
+        pecas = self.__posicoes[posicao].obterOcupantes()
+        if (len(pecas) > 0 and pecas[0].cor() == jogador):
             return len(pecas)
         return 0
 
@@ -133,10 +132,5 @@ class LinhaTabuleiro:
     def obterPecasRemovidas(self) -> list[Peca]:
         return self.__retiradas
 
-    def sentidoPontuacao(self, peca: Peca, posicao: int, jogador: Jogador) -> bool:
-        posicao_atual = self.obterPosicao(peca)
-        if posicao_atual > posicao and jogador.obterCor() == 0:
-            return True
-        elif posicao_atual < posicao and jogador.obterCor() == 1:
-            return True
-        return False
+    def sentidoPontuacao(self, peca: int, posicao: int, jogador: Jogador) -> bool:
+        return peca > posicao and jogador.obterCor() == 0 or peca < posicao and jogador.obterCor() == 1

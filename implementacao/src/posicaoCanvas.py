@@ -8,7 +8,8 @@ class PosicaoCanvas:
                  base: int,
                  height: int,
                  checkers_bottom_padding: int,
-                 checkers_between_padding: int):
+                 checkers_between_padding: int,
+                 posicao: int):
         self.__padding_x = padding_x
         self.__padding_y = padding_y
         self.__base = base
@@ -21,9 +22,13 @@ class PosicaoCanvas:
         self.__reverse = False
 
         self.__offset: int = 0
+        self.__posicao: int = posicao
 
     def reverse(self) -> bool:
         return self.__reverse
+
+    def posicao(self) -> int:
+        return self.__posicao
 
     def draw(self, color: str):
         x = self.__padding_x
@@ -36,7 +41,7 @@ class PosicaoCanvas:
         x3 = x + self.__base / 2
         y3 = y - size
         points = [x1, y1, x2, y2, x3, y3]
-        self.__canvas.create_polygon(points, fill=color)
+        self.__canvas.create_polygon(points, fill=color, tags=str(self.__posicao))
 
     def draw_reverse(self, color: str):
         x = self.__padding_x
@@ -49,7 +54,7 @@ class PosicaoCanvas:
         x3 = x + self.__base / 2
         y3 = y + size
         points = [x1, y1, x2, y2, x3, y3]
-        self.__canvas.create_polygon(points, fill=color)
+        self.__canvas.create_polygon(points, fill=color, tags=str(self.__posicao))
         self.__reverse = True
 
     def add_checker(self, checker):

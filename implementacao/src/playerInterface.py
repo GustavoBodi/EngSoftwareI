@@ -1,4 +1,4 @@
-from tkinter import Tk, Canvas, Menu, messagebox, simpledialog, Button
+from tkinter import Event, Tk, Canvas, Menu, messagebox, simpledialog, Button
 
 from dog.dog_actor import DogActor
 from dog.dog_interface import DogPlayerInterface
@@ -84,12 +84,12 @@ class PlayerInterface(DogPlayerInterface):
 
         self.__dado_label = Button(self.__tk, text="Jogue os dados", command=self.command_dice)
         self.__dado_label.pack()
-        self.__canvas.bind("<Button-1>", self.print_checker)
+        self.__canvas.bind("<Button-1>", self.interagirCanvas)
         self.__last_clicked = None
 
-        player_name = simpledialog.askstring(title="Player identification", prompt="Qual o seu nome?")
-        self.dog_actor = DogActor()
-        messagebox.showinfo(message=self.dog_actor.initialize(player_name, self))
+        # player_name = simpledialog.askstring(title="Player identification", prompt="Qual o seu nome?")
+        # self.dog_actor = DogActor()
+        # messagebox.showinfo(message=self.dog_actor.initialize(player_name, self))
 
         self.__tabuleiro = Tabuleiro(self)
         self.montarTabuleiro()
@@ -170,15 +170,16 @@ class PlayerInterface(DogPlayerInterface):
         # triangle.add_checker(new_checker)
         # self.__pecas.append(new_checker)
 
-    def draw_triangle(self, padding_x, padding_y):
+    def draw_triangle(self, padding_x, padding_y, posicao):
         self.__posicoes.append(
                 PosicaoCanvas(self.__canvas,
-                               padding_x,
-                               padding_y,
-                               self.__triangle_base,
-                               self.calculate_triangle_height(),
-                               self.__checker_bottom_padding,
-                               self.__checker_between_padding)
+                              padding_x,
+                              padding_y,
+                              self.__triangle_base,
+                              self.calculate_triangle_height(),
+                              self.__checker_bottom_padding,
+                              self.__checker_between_padding,
+                              posicao)
                 )
 
     def draw_triangles(self):
@@ -210,31 +211,31 @@ class PlayerInterface(DogPlayerInterface):
     def draw_triagles_right_bottom(self):
         padding_x = self.__width - self.__padding - self.__thickness
         padding_y = self.__height - self.__padding - self.__thickness
-        for _ in range(6):
+        for i in range(6):
             padding_x -= self.__triangle_base
-            self.draw_triangle(padding_x, padding_y)
+            self.draw_triangle(padding_x, padding_y, 11-i)
 
     def draw_triagles_left_bottom(self):
         padding_x = self.__padding + self.__thickness + \
                     self.__triangle_base * 6
         padding_y = self.__height - self.__padding - self.__thickness
-        for _ in range(6):
+        for i in range(6):
             padding_x -= self.__triangle_base
-            self.draw_triangle(padding_x, padding_y)
+            self.draw_triangle(padding_x, padding_y, 5-i)
 
     def draw_triangles_left_top(self):
         padding_x = self.__padding + self.__thickness
         padding_y = self.__padding + self.__thickness
-        for _ in range(6):
-            self.draw_triangle(padding_x, padding_y)
+        for i in range(6):
+            self.draw_triangle(padding_x, padding_y, 23-i)
             padding_x += self.__triangle_base
 
     def draw_triangles_right_top(self):
         padding_x = self.__width - self.__padding - self.__thickness - \
                     self.__triangle_base * 6
         padding_y = self.__padding + self.__thickness
-        for _ in range(6):
-            self.draw_triangle(padding_x, padding_y)
+        for i in range(6):
+            self.draw_triangle(padding_x, padding_y, 17-i)
             padding_x += self.__triangle_base
 
     def draw_board_border(self):
@@ -363,10 +364,7 @@ class PlayerInterface(DogPlayerInterface):
         # self.__cemiterio_vermelhas.limparOffset()
         # self.__cemiterio_brancas.limparOffset()
 
-        print(estado)
-        print(self.__pecas)
         for (peca, pecaCanvas) in zip(estado["pecas"], self.__pecas):
-            print(peca, pecaCanvas)
             pecaCanvas.apagarCanvas()
             if peca[1] == 24:
                 continue
@@ -376,16 +374,39 @@ class PlayerInterface(DogPlayerInterface):
     def montarTabuleiro(self) -> None:
         self.__tabuleiro.montarTabuleiro()
 
-    def interagirCanvas(self) -> None:
+    def interagirCanvas(self, event: Event) -> None:
+        posicao = self.__canvas.gettags("current")
+        if len(posicao) != 2:
+            return
+        posicao = int(posicao[0])
+
         matchStatus = self.__tabuleiro.statusPartida()
         if matchStatus == 3 or matchStatus == 4:
             movimentoOcorrendo = self.__tabuleiro.movimentoOcorrendo()
+            print(movimentoOcorrendo)
             if not movimentoOcorrendo:
-                #TODO: selecionar peca
-                pass
+                self.selecionarPeca(posicao)
             else:
-                #TODO: selecionar destino
-                pass
+                self.selecionarDestino(posicao)
 
             estado = self.__tabuleiro.obterEstadoJogo()
             self.atualizarInterface(estado)
+
+    def selecionarPeca(self, posicao: int) -> None:
+        jogador = self.__tabuleiro.identificaJogadorTurno()
+        self.__tabuleiro.colocaMovimentoRegular()
+        posicaoPropria = self.__tabuleiro.posicaoJogador(posicao, jogador)
+
+        if posicaoPropria:
+            pecaCemiterio = self.__tabuleiro.existePecaCemiterio(jogador)
+            if pecaCemiterio and posicao != 25:
+                self.__tabuleiro.colocaMovimentoIrregular()
+            elif (not pecaCemiterio) or (pecaCemiterio and posicao == 25):
+                self.__tabuleiro.registraAcaoLocal(posicao)
+                self.__tabuleiro.colocaMovimentoOcorrendo()
+        else:
+            self.__tabuleiro.colocaMovimentoIrregular()
+
+    def selecionarDestino(self, posicao) -> None:
+        self.__tabuleiro.definirMovimento()
+        movimentoPossivel = self.__tabuleiro.avaliarMovimento(posicao, self.__tabuleiro.obterDados()[0])

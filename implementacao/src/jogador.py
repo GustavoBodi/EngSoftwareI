@@ -40,7 +40,7 @@ class Jogador:
         raise NotImplementedError()
 
     def acabaramPecas(self) -> bool:
-        return len(self.__pecas == 0)
+        return len(self.__pecas) == 0
 
     def habilitarComoVencedor(self) -> None:
         self.__vencedor = True

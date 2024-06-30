@@ -25,7 +25,6 @@ class PecasCanvas:
         self.__canvas.delete(self.__oval)
 
     def desenhar(self, peca: Peca, posicao: PosicaoCanvas) -> None:
-        print('desenho')
         (x, y) = posicao.get_checker_position()
 
         offset = -self.__size*0.8*posicao.obterOffset()
@@ -42,6 +41,6 @@ class PecasCanvas:
                                  y + self.__size + offset,
                                  fill=cor,
                                  outline="",
-                                 tags="checkers")
+                                 tags=str(posicao.posicao()))
 
         posicao.aumentarOffset()
