@@ -71,3 +71,11 @@ class CemiterioCanvas:
                                   fill="black",
                                   font=('Helvetica 15 bold'))
 
+    def limparOffset(self) -> None:
+        raise NotImplementedError()
+
+    def obterOffset(self) -> int:
+        raise NotImplementedError()
+
+    def aumentarOffset(self) -> None:
+        raise NotImplementedError()

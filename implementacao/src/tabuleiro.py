@@ -152,7 +152,7 @@ class Tabuleiro:
     def obterDado(self) -> list[int]:
         return self.__dados.obterValores()
 
-    def obterEstadoJogo(self) -> dict:
+    def obterEstadoJogo(self) -> dict[str, list[tuple[Peca, int]]]:
         estado = {}
         listaPecasPosicoes = []
         for i, posicao in enumerate(self.__linhaTabuleiro.obterPosicoes()):

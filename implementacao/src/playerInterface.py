@@ -8,11 +8,10 @@ from cemiterioCanvas import CemiterioCanvas
 from posicaoCanvas import PosicaoCanvas
 from pecasCanvas import PecasCanvas
 from tabuleiro import Tabuleiro
+from peca import Peca
 
 class PlayerInterface(DogPlayerInterface):
     def __init__(self):
-        self.__tabuleiro = Tabuleiro(self)
-
         self.__tk = Tk()
         self.__tk.title("Gamão")
         self.__width = 1500
@@ -90,6 +89,10 @@ class PlayerInterface(DogPlayerInterface):
         player_name = simpledialog.askstring(title="Player identification", prompt="Qual o seu nome?")
         self.dog_actor = DogActor()
         messagebox.showinfo(message=self.dog_actor.initialize(player_name, self))
+
+        self.__tabuleiro = Tabuleiro(self)
+        estado = self.__tabuleiro.obterEstadoJogo()
+        self.atualizarInterface(estado)
 
     def print_checker(self, event):
         self.__canvas = event.widget
@@ -351,3 +354,28 @@ class PlayerInterface(DogPlayerInterface):
         else:
             self.__primeiro_dado.atualizarDado(dados[0], duplicado)
             self.__segundo_dado.atualizarDado(dados[0], duplicado)
+
+    def atualizarInterface(self, estado: dict[str, list[tuple[Peca, int]]]) -> None:
+        for posicao in self.__posicoes:
+            posicao.limparOffset()
+
+        self.__cemiterio_vermelhas.limparOffset()
+        self.__cemiterio_brancas.limparOffset()
+
+        for (peca, pecaCanvas) in zip(estado["pecas"], self.__pecas):
+            pecaCanvas.apagarCanvas()
+            offset = 0
+            if peca[1] == 24:
+                continue
+            elif peca[1] == 25:
+                if peca[0].cor() == 0:
+                    offset = self.__cemiterio_brancas.obterOffset()
+                    self.__cemiterio_brancas.aumentarOffset()
+                else:
+                    offset = self.__cemiterio_vermelhas.obterOffset()
+                    self.__cemiterio_vermelhas.aumentarOffset()
+            else:
+                offset = self.__posicoes[peca[1]].obterOffset()
+                self.__posicoes[peca[1]].aumentarOffset()
+
+            pecaCanvas.desenhar(peca[1], offset)

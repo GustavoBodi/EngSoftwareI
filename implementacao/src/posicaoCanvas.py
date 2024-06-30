@@ -69,3 +69,12 @@ class PosicaoCanvas:
                     self.__checker_bottom_padding +
                     self.__checker_between_padding *
                     self.__checkers_in)
+
+    def limparOffset(self) -> None:
+        raise NotImplementedError()
+
+    def obterOffset(self) -> int:
+        raise NotImplementedError()
+
+    def aumentarOffset(self) -> None:
+        raise NotImplementedError()

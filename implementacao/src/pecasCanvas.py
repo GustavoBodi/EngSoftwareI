@@ -23,3 +23,8 @@ class PecasCanvas:
                                  outline="",
                                  tags="checkers")
 
+    def apagarCanvas(self) -> None:
+        raise NotImplementedError()
+
+    def desenhar(self, posicao: int, offset: int) -> None:
+        raise NotImplementedError()
