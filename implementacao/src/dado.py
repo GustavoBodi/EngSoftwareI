@@ -1,5 +1,6 @@
 from random import choice
 
+
 class Dado:
     def __init__(self, playerInterface) -> None:
         self.__valores: list[int] = []

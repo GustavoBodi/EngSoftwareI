@@ -1,6 +1,7 @@
 from peca import Peca
 from posicao import Posicao
 from cemiterio import Cemiterio
+from jogador import Jogador
 
 
 class LinhaTabuleiro:
@@ -14,6 +15,9 @@ class LinhaTabuleiro:
     def removerPecas(self) -> None:
         for pos in self.__posicoes:
             pos.removerPecas()
+        self.__retiradas.clear()
+        self.__cemiterio_brancas.removerPecas()
+        self.__cemiterio_vermelhas.removerPecas()
 
     def posicionaPecas(self, jogador, posicao: int, quantidade: int) -> list[Peca]:
         pecas_retorno = []
@@ -45,7 +49,7 @@ class LinhaTabuleiro:
             pecas = pos.obterOcupantes()
             if (peca in pecas):
                 pecas.remove(peca)
-                break
+                return
         if peca in self.__cemiterio_vermelhas.obterPecas():
             self.__cemiterio_vermelhas.removerPeca(peca)
         if peca in self.__cemiterio_brancas.obterPecas():
@@ -61,16 +65,16 @@ class LinhaTabuleiro:
         return self.__cemiterio_brancas.obterPecas()
 
     def matarPeca(self, peca: Peca) -> None:
-        self.retirarPecaTabuleiro(peca)
+        self.removerPeca(peca)
         if peca.vermelha():
             self.__cemiterio_vermelhas.adicionarPeca(peca)
         else:
             self.__cemiterio_brancas.adicionarPeca(peca)
 
-    def pecasAdversario(self, posicao: int, adversario: int) -> int:
+    def pecasAdversario(self, posicao: int, adversario: Jogador) -> int:
         pos: Posicao = self.__posicoes[posicao]
         pecas: list[Peca] = pos.obterOcupantes()
-        if (pecas[0].vermelha() and adversario == 1) or (pecas[0].branca() and adversario == 0):
+        if (pecas[0].obterCor() == adversario.obterCor()):
             return len(pecas)
         return 0
 
@@ -82,11 +86,26 @@ class LinhaTabuleiro:
 
     def pecasSairam(self, cor: int) -> bool:
         for peca in self.__retiradas:
-            if peca.branca() and cor == 0:
-                return True
-            if peca.vermelha() and cor == 1:
+            if peca.obterCor() == cor:
                 return True
         return False
+
+    def podeSair(self, cor: int) -> bool:
+        quantidade = 0
+        for retirada in self.__retiradas:
+            if retirada.cor() == cor:
+                quantidade += 1
+        if cor == 0:
+            for i, posicao in enumerate(self.__posicoes):
+                for peca in posicao.obterOcupantes():
+                    if i >= 18:
+                        quantidade += 1
+        if cor == 1:
+            for i, posicao in enumerate(self.__posicoes):
+                for peca in posicao.obterOcupantes():
+                    if i < 6:
+                        quantidade += 1
+        return quantidade == 15
 
     def adicionarPeca(self, peca: Peca, posicao: int) -> None:
         self.__posicoes[posicao].adicionarOcupante(peca)
@@ -105,5 +124,19 @@ class LinhaTabuleiro:
             if peca in posicao.obterOcupantes():
                 return i
 
+    def obterPecasPosicao(self, posicao: int) -> list[Peca]:
+        if posicao <= 23:
+            return self.__posicoes[posicao].obterOcupantes()
+        else:
+            raise NotImplementedError()
+
     def obterPecasRemovidas(self) -> list[Peca]:
         return self.__retiradas
+
+    def sentidoPontuacao(self, peca: Peca, posicao: int, jogador: Jogador) -> bool:
+        posicao_atual = self.obterPosicao(peca)
+        if posicao_atual > posicao and jogador.obterCor() == 0:
+            return True
+        elif posicao_atual < posicao and jogador.obterCor() == 1:
+            return True
+        return False

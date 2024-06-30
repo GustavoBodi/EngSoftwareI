@@ -1,11 +1,8 @@
 from peca import Peca
-from linhaTabuleiro import LinhaTabuleiro
-from dado import Dado
 
 
 class Jogador:
-    def __init__(self, tabuleiro, linhaTabuleiro: LinhaTabuleiro,
-                 dado: Dado, nome: str, cor: int, identificador: str) -> None:
+    def __init__(self, nome: str, cor: int, identificador: str) -> None:
         self.__nome: str = nome
         self.__cor: int = cor
         self.__identificador: str = identificador
@@ -15,55 +12,12 @@ class Jogador:
         self.__pecas: list[Peca] = []
         self.__valorMovimento: int = 0
         self.__sentido: bool = False
-        self.__tabuleiro = tabuleiro
-        self.__linhaTabuleiro: LinhaTabuleiro = linhaTabuleiro
-        self.__dado: Dado = dado
-
-    def suaPosicao(self, posicao: int) -> bool:
-        pecas = self.__linhaTabuleiro.obterPecas(posicao)
-        if len(pecas) > 0:
-            if pecas[0].branca() and self.obterCor() == 0:
-                return True
-            elif pecas[0].vermelha() and self.obterCor() == 1:
-                return False
-
-    def registraPosicao(self, posicao: int) -> None:
-        raise NotImplementedError()
-
-    def definirTurnoPossivel(self) -> None:
-        self.__turnoPossivel = True
-
-    def definirTurnoTerminado(self) -> None:
-        self.__seuTurno = False
 
     def habilitaTurno(self) -> None:
         self.__seuTurno = True
 
-    def copiarDados(self, dados: list[int]) -> list[int]:
-        temp = []
-        for dado in dados:
-            temp.append(dado)
-        return temp
-
-    def avaliarPossibilidadeTurno(self) -> bool:
-        dados = self.__tabuleiro.obterDado()
-
-        for dado in dados:
-            for peca in self.__pecas:
-                for posicao in range(0, 25):
-                    movimentoPossivel = self.__tabuleiro.avaliarMovimento(peca, posicao, dado)
-                    if movimentoPossivel:
-                        self.marcarMovimentoPossivel()
-                        return True
-
-        self.marcarMovimentoImpossivel()
-        return False
-
-    def copiarPecas(self, pecas: list[Peca]) -> list[Peca]:
-        temp = []
-        for peca in self.__pecas:
-            temp.append(peca)
-        return temp
+    def definirTurnoTerminado(self) -> None:
+        self.__seuTurno = False
 
     def marcarMovimentoPossivel(self) -> None:
         self.__turnoPossivel = True
@@ -77,6 +31,9 @@ class Jogador:
     def removerPecas(self) -> None:
         self.__pecas.clear()
 
+    def removerPeca(self, peca: Peca) -> None:
+        self.__pecas.remove(peca)
+
     def atribuirPecas(self, pecas: list[Peca]) -> None:
         self.__pecas = pecas
 
@@ -84,25 +41,10 @@ class Jogador:
         raise NotImplementedError()
 
     def acabaramPecas(self) -> bool:
-        pecas_removidas = self.__linhaTabuleiro.obterPecasRemovidas()
-        pecas = []
-        for peca in pecas_removidas:
-            if peca.branca() and self.obterCor() == 0:
-                pecas.append(peca)
-            elif peca.vermelha() and self.obterCor() == 1:
-                pecas.append(peca)
-        return len(pecas) == 15
+        return len(self.__pecas == 0)
 
     def habilitarComoVencedor(self) -> None:
         self.__vencedor = True
-
-    def sentidoPontuacao(self, peca: Peca, posicao: int) -> bool:
-        posicao_atual = self.__linhaTabuleiro.obterPosicao(peca)
-        if posicao_atual > posicao and self.obterCor() == 0:
-            return True
-        elif posicao_atual < posicao and self.obterCor() == 1:
-            return True
-        return False
 
     def obterCor(self) -> int:
         return self.__cor
