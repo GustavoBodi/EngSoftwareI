@@ -9,11 +9,11 @@ class PosicaoCanvas:
                  height: int,
                  checkers_bottom_padding: int,
                  checkers_between_padding: int):
-        self._padding_x = padding_x
-        self._padding_y = padding_y
+        self.__padding_x = padding_x
+        self.__padding_y = padding_y
         self.__base = base
         self.__height = height
-        self._canvas = canvas
+        self.__canvas = canvas
         self.__checkers_in = 0
         self.__checker_between_padding = checkers_between_padding
         self.__checker_bottom_padding = checkers_bottom_padding
@@ -22,9 +22,12 @@ class PosicaoCanvas:
 
         self.__offset: int = 0
 
+    def reverse(self) -> bool:
+        return self.__reverse
+
     def draw(self, color: str):
-        x = self._padding_x
-        y = self._padding_y
+        x = self.__padding_x
+        y = self.__padding_y
         size = self.__height
         x1 = x
         y1 = y
@@ -33,11 +36,11 @@ class PosicaoCanvas:
         x3 = x + self.__base / 2
         y3 = y - size
         points = [x1, y1, x2, y2, x3, y3]
-        self._canvas.create_polygon(points, fill=color)
+        self.__canvas.create_polygon(points, fill=color)
 
     def draw_reverse(self, color: str):
-        x = self._padding_x
-        y = self._padding_y
+        x = self.__padding_x
+        y = self.__padding_y
         size = self.__height
         x1 = x
         y1 = y
@@ -46,7 +49,7 @@ class PosicaoCanvas:
         x3 = x + self.__base / 2
         y3 = y + size
         points = [x1, y1, x2, y2, x3, y3]
-        self._canvas.create_polygon(points, fill=color)
+        self.__canvas.create_polygon(points, fill=color)
         self.__reverse = True
 
     def add_checker(self, checker):
@@ -57,17 +60,17 @@ class PosicaoCanvas:
         self.__checkers_in -= 1
         self.__checkers.remove(checker)
 
-    def get_checker_position(self):
+    def get_checker_position(self) -> tuple[float, float]:
         if (not self.__reverse):
-            return (self._padding_x + self.__base / 2,
-                    self._padding_y -
+            return (self.__padding_x + self.__base / 2,
+                    self.__padding_y -
                     self.__base / 2 -
                     self.__checker_bottom_padding -
                     self.__checker_between_padding *
                     self.__checkers_in)
         else:
-            return (self._padding_x + self.__base / 2,
-                    self._padding_y +
+            return (self.__padding_x + self.__base / 2,
+                    self.__padding_y +
                     self.__checker_bottom_padding +
                     self.__checker_between_padding *
                     self.__checkers_in)

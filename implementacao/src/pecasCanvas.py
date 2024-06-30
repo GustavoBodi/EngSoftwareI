@@ -1,30 +1,46 @@
 from tkinter import Canvas
 
-class PecasCanvas:
-    def __init__(self, canvas: Canvas,
-                 padding_x: int,
-                 padding_y: int,
-                 size: int,
-                 color: str):
-        self.__padding_x = padding_x
-        self.__padding_y = padding_y
-        self.__size = size
-        self.__canvas = canvas
-        self.__color = color
+from posicaoCanvas import PosicaoCanvas
+from peca import Peca
 
-    def draw(self):
-        x = self.__padding_x
-        y = self.__padding_y
-        self.__canvas.create_oval(x - self.__size / 2,
-                                 float(y),
-                                 x + self.__size / 2,
-                                 float(y + self.__size),
-                                 fill=self.__color,
+class PecasCanvas:
+    def __init__(self, canvas: Canvas, size: float):
+        self.__canvas: Canvas = canvas
+        self.__oval: int = 0
+        self.__size: float = size
+
+    # def draw(self):
+    #     x = self.__padding_x
+    #     y = self.__padding_y
+    #     self.__canvas.create_oval(x - self.__size / 2,
+    #                              float(y),
+    #                              x + self.__size / 2,
+    #                              float(y + self.__size),
+    #                              fill=self.__color,
+    #                              outline="",
+    #                              tags="checkers")
+
+    def apagarCanvas(self) -> None:
+        self.__canvas.delete(self.__oval)
+
+    def desenhar(self, peca: Peca, posicao: PosicaoCanvas) -> None:
+        print('desenho')
+        (x, y) = posicao.get_checker_position()
+
+        offset = -self.__size*0.8*posicao.obterOffset()
+        if posicao.reverse():
+            offset = -offset
+
+        cor = "#FFFDFA"
+        if peca.vermelha():
+            cor = "#E92019"
+
+        self.__oval = self.__canvas.create_oval(x - self.__size/2,
+                                 y + offset,
+                                 x + self.__size/2,
+                                 y + self.__size + offset,
+                                 fill=cor,
                                  outline="",
                                  tags="checkers")
 
-    def apagarCanvas(self) -> None:
-        raise NotImplementedError()
-
-    def desenhar(self, posicao: int, offset: int) -> None:
-        raise NotImplementedError()
+        posicao.aumentarOffset()

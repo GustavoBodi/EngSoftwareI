@@ -34,11 +34,11 @@ class PlayerInterface(DogPlayerInterface):
                                width=self.__full_width,
                                height=self.__height,
                                bg=self.__background_color)
-        self.__posicoes: list[PosicaoCanvas] = []
-        self.__pecas: list[PecasCanvas] = []
         self.__triangle_base = self.calculate_triangle_width()
         self.__checker_size = min(self.__triangle_base * 0.42,
                                   self.calculate_triangle_height() * 0.2)
+        self.__posicoes: list[PosicaoCanvas] = []
+        self.__pecas: list[PecasCanvas] = [PecasCanvas(self.__canvas, self.__checker_size) for _ in range(30)]
         self.__checker_points_box_size = 100
         self.__dice_distance = 50
         self.__cemiterio_brancas = CemiterioCanvas(self.__canvas,
@@ -86,9 +86,9 @@ class PlayerInterface(DogPlayerInterface):
         self.__canvas.bind("<Button-1>", self.print_checker)
         self.__last_clicked = None
 
-        player_name = simpledialog.askstring(title="Player identification", prompt="Qual o seu nome?")
-        self.dog_actor = DogActor()
-        messagebox.showinfo(message=self.dog_actor.initialize(player_name, self))
+        # player_name = simpledialog.askstring(title="Player identification", prompt="Qual o seu nome?")
+        # self.dog_actor = DogActor()
+        # messagebox.showinfo(message=self.dog_actor.initialize(player_name, self))
 
         self.__tabuleiro = Tabuleiro(self)
         self.montarTabuleiro()
@@ -156,15 +156,15 @@ class PlayerInterface(DogPlayerInterface):
             self.draw_checker(fourth_triangle_white, self.__white_color)
             self.draw_checker(fourth_triangle_red, self.__red_color)
 
-        for checker in self.__pecas:
-            checker.draw()
+        # for checker in self.__pecas:
+        #     checker.draw()
 
     def draw_checker(self, triangle: PosicaoCanvas, color: str):
         (x, y) = triangle.get_checker_position()
-        new_checker = PecasCanvas(self.__canvas, x, y,
-                                     self.__checker_size,
-                                     color)
-        triangle.add_checker(new_checker)
+        # new_checker = PecasCanvas(self.__canvas, x, y,
+        #                              self.__checker_size,
+        #                              color)
+        # triangle.add_checker(new_checker)
         # self.__pecas.append(new_checker)
 
     def draw_triangle(self, padding_x, padding_y):
@@ -360,26 +360,18 @@ class PlayerInterface(DogPlayerInterface):
         for posicao in self.__posicoes:
             posicao.limparOffset()
 
-        self.__cemiterio_vermelhas.limparOffset()
-        self.__cemiterio_brancas.limparOffset()
+        # self.__cemiterio_vermelhas.limparOffset()
+        # self.__cemiterio_brancas.limparOffset()
 
+        print(estado)
+        print(self.__pecas)
         for (peca, pecaCanvas) in zip(estado["pecas"], self.__pecas):
+            print(peca, pecaCanvas)
             pecaCanvas.apagarCanvas()
-            offset = 0
             if peca[1] == 24:
                 continue
-            elif peca[1] == 25:
-                if peca[0].cor() == 0:
-                    offset = self.__cemiterio_brancas.obterOffset()
-                    self.__cemiterio_brancas.aumentarOffset()
-                else:
-                    offset = self.__cemiterio_vermelhas.obterOffset()
-                    self.__cemiterio_vermelhas.aumentarOffset()
-            else:
-                offset = self.__posicoes[peca[1]].obterOffset()
-                self.__posicoes[peca[1]].aumentarOffset()
 
-            pecaCanvas.desenhar(peca[1], offset)
+            pecaCanvas.desenhar(peca[0], self.__posicoes[peca[1]])
 
     def montarTabuleiro(self) -> None:
         self.__tabuleiro.montarTabuleiro()
