@@ -28,8 +28,8 @@ class Jogador:
             elif pecas[0].vermelha() and self.obterCor() == 1:
                 return False
 
-    # def registraPosicao(self, posicao: int) -> None:
-    #     raise NotImplementedError()
+    def registraPosicao(self, posicao: int) -> None:
+        raise NotImplementedError()
 
     def definirTurnoPossivel(self) -> None:
         self.__turnoPossivel = True
@@ -78,8 +78,8 @@ class Jogador:
     def atribuirPecas(self, pecas: list[Peca]) -> None:
         self.__pecas = pecas
 
-    # def obterValorMovimento(self) -> None:
-    #     raise NotImplementedError()
+    def obterValorMovimento(self) -> None:
+        raise NotImplementedError()
 
     def acabaramPecas(self) -> bool:
         pecas_removidas = self.__linhaTabuleiro.obterPecasRemovidas()

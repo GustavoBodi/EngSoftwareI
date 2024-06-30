@@ -94,8 +94,8 @@ class Tabuleiro:
     def colocarEsperando(self) -> None:
         self.__esperando = True
 
-    # def comecar_partida(self, jogadores: list[str], idJogadorLocal: str) -> None:
-    #     raise NotImplementedError()
+    def comecar_partida(self, jogadores: list[str], idJogadorLocal: str) -> None:
+        raise NotImplementedError()
 
     def definirMovimento(self) -> None:
         self.__movimento.clear()
