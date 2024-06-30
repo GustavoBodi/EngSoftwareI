@@ -72,7 +72,10 @@ class Jogador:
         self.__turnoPossivel = False
 
     def limparTabuleiro(self) -> None:
-        self.__linhaTabuleiro.removerPecas()
+        self.removerPecas()
+
+    def removerPecas(self) -> None:
+        self.__pecas.clear()
 
     def atribuirPecas(self, pecas: list[Peca]) -> None:
         self.__pecas = pecas

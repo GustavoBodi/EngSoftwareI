@@ -15,12 +15,15 @@ class LinhaTabuleiro:
         for pos in self.__posicoes:
             pos.removerPecas()
 
-    def posicionaPecas(self, jogador: int, posicao: int, quantidade: int) -> list[Peca]:
+    def posicionaPecas(self, jogador, posicao: int, quantidade: int) -> list[Peca]:
         pecas_retorno = []
-        for i in range(quantidade):
-            peca = Peca(jogador)
+        for _ in range(quantidade):
+            cor = jogador.obterCor()
+            peca = Peca(cor)
             pecas_retorno.append(peca)
             self.adicionarPeca(peca, posicao)
+
+        jogador.atribuirPecas(pecas_retorno)
         return pecas_retorno
 
     def moverPeca(self, peca: Peca, posicao: int) -> None:
@@ -51,10 +54,10 @@ class LinhaTabuleiro:
     def moverForaTabuleiro(self, peca: Peca) -> None:
         self.retirarPecaTabuleiro(peca)
 
-    def obterPecasCemiterioVermelho(self) -> [Peca]:
+    def obterPecasCemiterioVermelho(self) -> list[Peca]:
         return self.__cemiterio_vermelhas.obterPecas()
 
-    def obterPecasCemiterioBranco(self) -> [Peca]:
+    def obterPecasCemiterioBranco(self) -> list[Peca]:
         return self.__cemiterio_brancas.obterPecas()
 
     def matarPeca(self, peca: Peca) -> None:

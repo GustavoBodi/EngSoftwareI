@@ -20,6 +20,8 @@ class PosicaoCanvas:
         self.__checkers = []
         self.__reverse = False
 
+        self.__offset: int = 0
+
     def draw(self, color: str):
         x = self._padding_x
         y = self._padding_y
@@ -71,10 +73,10 @@ class PosicaoCanvas:
                     self.__checkers_in)
 
     def limparOffset(self) -> None:
-        raise NotImplementedError()
+        self.__offset: int = 0
 
     def obterOffset(self) -> int:
-        raise NotImplementedError()
+        return self.__offset
 
     def aumentarOffset(self) -> None:
-        raise NotImplementedError()
+        self.__offset += 1

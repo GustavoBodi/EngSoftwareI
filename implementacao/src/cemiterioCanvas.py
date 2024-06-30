@@ -19,6 +19,8 @@ class CemiterioCanvas:
         self.__reverse = False
         self.draw()
 
+        self.__offset: int = 0
+
     def draw(self, color: str = "white"):
         x = self.__padding_x
         y = self.__padding_y
@@ -72,10 +74,10 @@ class CemiterioCanvas:
                                   font=('Helvetica 15 bold'))
 
     def limparOffset(self) -> None:
-        raise NotImplementedError()
+        self.__offset: int = 0
 
     def obterOffset(self) -> int:
-        raise NotImplementedError()
+        return self.__offset
 
     def aumentarOffset(self) -> None:
-        raise NotImplementedError()
+        self.__offset += 1

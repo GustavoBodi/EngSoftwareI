@@ -32,6 +32,10 @@ class Tabuleiro:
                                       cor,
                                       id)
 
+    def adicionarPecas(self, pecas: list[Peca]) -> None:
+        for peca in pecas:
+            self.__pecas.append(peca)
+
     def adicionarPeca(self, peca: Peca, posicao: int) -> None:
         self.__linhaTabuleiro.adicionarPeca(peca, posicao)
 
@@ -107,7 +111,7 @@ class Tabuleiro:
         jogador_cor = jogador.obterCor()
         if jogador_cor == 0:
             return len(self.__linhaTabuleiro.obterPecasCemiterioBranco()) > 0
-        elif jogador_cor == 1:
+        else:
             return len(self.__linhaTabuleiro.obterPecasCemiterioVermelho()) > 0
 
     def identificaJogadorTurno(self) -> Jogador:
@@ -131,8 +135,18 @@ class Tabuleiro:
         else:
             self.__jogadorLocal.definirTurnoTerminado()
 
+    def montarTabuleiro(self) -> None:
+        self.limparTabuleiro()
+        for jogador in [self.__jogadorRemoto, self.__jogadorLocal]:
+            for (quantidade, posicao) in [(5,5), (3,7), (5,12), (2,23)]:
+                pecas = self.__linhaTabuleiro.posicionaPecas(jogador, posicao, quantidade)
+                self.adicionarPecas(pecas)
+
     def limparTabuleiro(self) -> None:
+        self.__jogadorLocal.limparTabuleiro()
+        self.__jogadorRemoto.limparTabuleiro()
         self.__linhaTabuleiro.removerPecas()
+        self.removerPecas()
 
     def marcarJogoTerminado(self) -> None:
         self.__partidaEmAndamento = False
@@ -144,7 +158,7 @@ class Tabuleiro:
         self.__movimento['state'] = "finished"
 
     def movimentoOcorrendo(self) -> bool:
-        self.__movimentoOcorrendo = True
+        return self.__movimentoOcorrendo
 
     def movimentoRegular(self) -> None:
         self.__movimentoRegular = True
@@ -183,6 +197,9 @@ class Tabuleiro:
 
     def removerPeca(self, peca: Peca) -> None:
         self.__linhaTabuleiro.removerPeca(peca)
+
+    def removerPecas(self) -> None:
+        self.__pecas.clear()
 
     def removerPecaMarcada(self) -> None:
         peca = self.__linhaTabuleiro.pecaMarcadaRemovida()

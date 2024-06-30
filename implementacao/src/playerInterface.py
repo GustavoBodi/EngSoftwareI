@@ -91,6 +91,7 @@ class PlayerInterface(DogPlayerInterface):
         messagebox.showinfo(message=self.dog_actor.initialize(player_name, self))
 
         self.__tabuleiro = Tabuleiro(self)
+        self.montarTabuleiro()
         estado = self.__tabuleiro.obterEstadoJogo()
         self.atualizarInterface(estado)
 
@@ -164,7 +165,7 @@ class PlayerInterface(DogPlayerInterface):
                                      self.__checker_size,
                                      color)
         triangle.add_checker(new_checker)
-        self.__pecas.append(new_checker)
+        # self.__pecas.append(new_checker)
 
     def draw_triangle(self, padding_x, padding_y):
         self.__posicoes.append(
@@ -379,3 +380,6 @@ class PlayerInterface(DogPlayerInterface):
                 self.__posicoes[peca[1]].aumentarOffset()
 
             pecaCanvas.desenhar(peca[1], offset)
+
+    def montarTabuleiro(self) -> None:
+        self.__tabuleiro.montarTabuleiro()
