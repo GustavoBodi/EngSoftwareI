@@ -213,7 +213,7 @@ class PlayerInterface(DogPlayerInterface):
         padding_y = self.__height - self.__padding - self.__thickness
         for i in range(6):
             padding_x -= self.__triangle_base
-            self.draw_triangle(padding_x, padding_y, 11-i)
+            self.draw_triangle(padding_x, padding_y, i)
 
     def draw_triagles_left_bottom(self):
         padding_x = self.__padding + self.__thickness + \
@@ -221,13 +221,13 @@ class PlayerInterface(DogPlayerInterface):
         padding_y = self.__height - self.__padding - self.__thickness
         for i in range(6):
             padding_x -= self.__triangle_base
-            self.draw_triangle(padding_x, padding_y, 5-i)
+            self.draw_triangle(padding_x, padding_y, i+6)
 
     def draw_triangles_left_top(self):
         padding_x = self.__padding + self.__thickness
         padding_y = self.__padding + self.__thickness
         for i in range(6):
-            self.draw_triangle(padding_x, padding_y, 23-i)
+            self.draw_triangle(padding_x, padding_y, i+12)
             padding_x += self.__triangle_base
 
     def draw_triangles_right_top(self):
@@ -235,7 +235,7 @@ class PlayerInterface(DogPlayerInterface):
                     self.__triangle_base * 6
         padding_y = self.__padding + self.__thickness
         for i in range(6):
-            self.draw_triangle(padding_x, padding_y, 17-i)
+            self.draw_triangle(padding_x, padding_y, i+18)
             padding_x += self.__triangle_base
 
     def draw_board_border(self):
@@ -369,6 +369,10 @@ class PlayerInterface(DogPlayerInterface):
             if peca[1] == 24:
                 continue
 
+            if peca[1] == 25:
+                #TODO: desenhar no cemiterio
+                continue
+
             pecaCanvas.desenhar(peca[0], self.__posicoes[peca[1]])
 
     def montarTabuleiro(self) -> None:
@@ -414,7 +418,7 @@ class PlayerInterface(DogPlayerInterface):
                 self.__tabuleiro.removerPecaSelecionada()
             if destino == 1:
                 self.__tabuleiro.matarPecaMarcada()
-            else:
+            elif destino == 2:
                 self.__tabuleiro.moverPecaSelecionada(posicao)
 
             self.__tabuleiro.colocaMovimentoNaoOcorrendo()

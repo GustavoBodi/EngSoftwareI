@@ -45,6 +45,8 @@ class Tabuleiro:
         return self.avaliarMovimento(self.__pecaSelecionada, posicao, dados)
 
     def avaliarMovimento(self, peca: int, posicao: int, dados: list[int]) -> tuple[bool, int]:
+        if peca == posicao:
+            return (True, 3)
         for dado in dados:
             jogador: Jogador = self.identificaJogadorTurno()
             alcancavel: bool = self.alcancavelDados(peca, posicao, dado)
@@ -96,7 +98,7 @@ class Tabuleiro:
                 return True
             return False
         else:
-            return True
+            return False
 
     def avaliarPossibilidadeTurno(self, jogador: Jogador) -> bool:
         dados = self.obterDados()
