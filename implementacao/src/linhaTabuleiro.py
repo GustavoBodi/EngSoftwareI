@@ -26,7 +26,13 @@ class LinhaTabuleiro:
 
     def moverPeca(self, peca: Peca, posicao: int) -> None:
         self.removerPeca(peca)
-        self.__posicoes[posicao].adicionarOcupante(peca)
+        if posicao <= 23:
+            self.__posicoes[posicao].adicionarOcupante(peca)
+        elif posicao == 24:
+            if peca.vermelha():
+                self.__cemiterio_vermelhas.adicionarPeca(peca)
+            elif peca.branca():
+                self.__cemiterio_brancas.adicionarPeca(peca)
 
     def retirarPecaTabuleiro(self, peca: Peca) -> None:
         self.removerPeca(peca)
@@ -38,9 +44,19 @@ class LinhaTabuleiro:
             if (peca in pecas):
                 pecas.remove(peca)
                 break
+        if peca in self.__cemiterio_vermelhas.obterPecas():
+            self.__cemiterio_vermelhas.removerPeca(peca)
+        if peca in self.__cemiterio_brancas.obterPecas():
+            self.__cemiterio_brancas.removerPeca(peca)
 
     def moverForaTabuleiro(self, peca: Peca) -> None:
         self.retirarPecaTabuleiro(peca)
+
+    def obterPecasCemiterioVermelho(self) -> [Peca]:
+        return self.__cemiterio_vermelhas.obterPecas()
+
+    def obterPecasCemiterioBranco(self) -> [Peca]:
+        return self.__cemiterio_brancas.obterPecas()
 
     def matarPeca(self, peca: Peca) -> None:
         self.retirarPecaTabuleiro(peca)
@@ -58,6 +74,9 @@ class LinhaTabuleiro:
 
     def marcarRemovida(self, peca: Peca) -> None:
         self.__removida = peca
+
+    def pecaMarcadaRemovida(self) -> Peca:
+        return self.__removida
 
     def pecasSairam(self, jogador: Jogador) -> bool:
         cor: int = jogador.obterCor()

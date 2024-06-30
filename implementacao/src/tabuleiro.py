@@ -18,6 +18,7 @@ class Tabuleiro:
 
         self.__jogadorLocal: Jogador
         self.__jogadorRemoto: Jogador
+        self.__jogadorTurno: Jogador = None
         self.__playerInterface: PlayerInterface = PlayerInterface()
 
         self.__partidaEmAndamento: bool = False
@@ -25,7 +26,6 @@ class Tabuleiro:
         self.__turnoPossivel: bool = False
         self.__movimentoOcorrendo: bool = False
         self.__esperando: bool = False
-        self.__jogadorTurno: Jogador = None
 
     def __inicializar(self, simbolo: int, id: str, nome: str) -> None:
         self.__playerInterface = PlayerInterface()
@@ -101,11 +101,15 @@ class Tabuleiro:
     def definirTerminado(self) -> None:
         self.__partidaEmAndamento = False
 
-    def existePecaCemiterio(self) -> bool:
-        raise NotImplementedError()
+    def existePecaCemiterio(self, jogador: Jogador) -> bool:
+        jogador_cor = jogador.obterCor()
+        if jogador_cor == 0:
+            return len(self.__linhaTabuleiro.obterPecasCemiterioBranco()) > 0
+        elif jogador_cor == 1:
+            return len(self.__linhaTabuleiro.obterPecasCemiterioVermelho()) > 0
 
     def identificaJogadorTurno(self) -> Jogador:
-        raise NotImplementedError()
+        return self.__jogadorTurno
 
     def jogarDados(self) -> None:
         self.__dados.zerarDados()
@@ -148,7 +152,19 @@ class Tabuleiro:
         return self.__dados.obterValores()
 
     def obterEstadoJogo(self) -> dict:
-        raise NotImplementedError()
+        estado = {}
+        listaPecasPosicoes = []
+        for i, posicao in enumerate(self.__linhaTabuleiro.obterPosicoes()):
+            for ocupantes in posicao.obterOcupantes():
+                listaPecasPosicoes.append((ocupantes, i))
+        for peca in self.__linhaTabuleiro.obterPecasCemiterioVermelho():
+            listaPecasPosicoes.append((peca, 25))
+        for peca in self.__linhaTabuleiro.obterPecasCemiterioBranco():
+            listaPecasPosicoes.append((peca, 25))
+        for peca in self.__linhaTabuleiro.obterPecasRemovidas():
+            listaPecasPosicoes.append((peca, 24))
+        estado['pecas'] = listaPecasPosicoes
+        return estado
 
     def receber_notificacao_desistencia(self) -> None:
         raise NotImplementedError()
@@ -159,20 +175,12 @@ class Tabuleiro:
     def registraAcaoLocal(self, posicao: int) -> None:
         raise NotImplementedError()
 
-    def registrarDados(self) -> None:
-        raise NotImplementedError()
-
     def removerPeca(self, peca: Peca) -> None:
-        raise NotImplementedError()
-
-    def removerPecaCemiterio(self) -> None:
-        raise NotImplementedError()
+        self.__linhaTabuleiro.removerPeca(peca)
 
     def removerPecaMarcada(self) -> None:
-        raise NotImplementedError()
-
-    def removerPecasMarcada(self) -> None:
-        raise NotImplementedError()
+        peca = self.__linhaTabuleiro.pecaMarcadaRemovida()
+        self.__linhaTabuleiro.removerPeca(peca)
 
     def resetar_jogo(self) -> None:
         raise NotImplementedError()

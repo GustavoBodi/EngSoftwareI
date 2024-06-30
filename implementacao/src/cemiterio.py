@@ -9,6 +9,11 @@ class Cemiterio:
     def removerPecas(self) -> None:
         self.__pecas.clear()
 
+    def removerPeca(self, peca: Peca) -> None:
+        for peca_interna in self.__pecas:
+            if peca_interna == peca:
+                self.__pecas.remove(peca)
+
     def adicionarPeca(self, peca: Peca) -> None:
         self.__pecas.append(peca)
 
