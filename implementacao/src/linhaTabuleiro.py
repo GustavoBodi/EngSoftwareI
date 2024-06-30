@@ -40,6 +40,9 @@ class LinhaTabuleiro:
             elif peca.branca():
                 self.__cemiterio_brancas.adicionarPeca(peca)
 
+    def removerPecaPosicao(self, posicao: int) -> None:
+        self.__posicoes[posicao].removerPeca()
+
     def removerPeca(self, peca: Peca) -> None:
         for pos in self.__posicoes:
             pecas = pos.obterOcupantes()
@@ -59,6 +62,9 @@ class LinhaTabuleiro:
 
     def matarPeca(self, peca: Peca) -> None:
         self.moverPeca(peca, 25)
+
+    def matarPecaMarcada(self) -> None:
+        self.moverPeca(self.__removida, 25)
 
     def pecasJogador(self, posicao: int, jogador: int) -> int:
         pecas = self.__posicoes[posicao].obterOcupantes()

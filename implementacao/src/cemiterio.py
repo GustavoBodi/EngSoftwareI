@@ -17,6 +17,9 @@ class Cemiterio:
     def adicionarPeca(self, peca: Peca) -> None:
         self.__pecas.append(peca)
 
+    def adicionar(self) -> None:
+        self.__pecas.append(Peca(self.__cor))
+
     def existePecaCemiterio(self) -> bool:
         return len(self.__pecas) > 0
 

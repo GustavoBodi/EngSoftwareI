@@ -8,8 +8,8 @@ class Posicao:
     def removerPecas(self) -> None:
         self.__ocupantes.clear()
 
-    def removerPeca(self, peca: Peca) -> None:
-        self.__ocupantes.remove(peca)
+    def removerPeca(self) -> None:
+        self.__ocupantes.pop()
 
     def obterOcupantes(self) -> list[Peca]:
         return self.__ocupantes

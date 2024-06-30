@@ -383,7 +383,6 @@ class PlayerInterface(DogPlayerInterface):
         matchStatus = self.__tabuleiro.statusPartida()
         if matchStatus == 3 or matchStatus == 4:
             movimentoOcorrendo = self.__tabuleiro.movimentoOcorrendo()
-            print(movimentoOcorrendo)
             if not movimentoOcorrendo:
                 self.selecionarPeca(posicao)
             else:
@@ -412,6 +411,18 @@ class PlayerInterface(DogPlayerInterface):
         (movimentoPossivel, destino) = self.__tabuleiro.avaliarMovimento(posicao, self.__tabuleiro.obterDados())
         if movimentoPossivel:
             if destino == 0:
-                self.__tabuleiro.removerPeca()
-            elif destino == 1:
+                self.__tabuleiro.removerPecaSelecionada()
+            if destino == 1:
+                self.__tabuleiro.matarPecaMarcada()
             else:
+                self.__tabuleiro.moverPecaSelecionada(posicao)
+
+            self.__tabuleiro.colocaMovimentoNaoOcorrendo()
+
+            termino = self.__tabuleiro.avaliarTermino()
+            if termino:
+                self.__tabuleiro.marcarMovimento('finished')
+            else:
+                self.__tabuleiro.marcarMovimento('next')
+        else:
+            self.__tabuleiro.colocaMovimentoIrregular()

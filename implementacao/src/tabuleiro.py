@@ -81,6 +81,8 @@ class Tabuleiro:
             self.marcarTerminado()
             jogador.habilitarComoVencedor()
 
+        return termino
+
     def colocaMovimentoIrregular(self) -> None:
         self.__movimentoRegular = False
 
@@ -109,6 +111,9 @@ class Tabuleiro:
 
     def colocaMovimentoOcorrendo(self) -> None:
         self.__movimentoOcorrendo = True
+
+    def colocaMovimentoNaoOcorrendo(self) -> None:
+        self.__movimentoOcorrendo = False
 
     def colocarEsperando(self) -> None:
         self.__esperando = True
@@ -213,8 +218,15 @@ class Tabuleiro:
     def registraAcaoLocal(self, posicao: int) -> None:
         self.__pecaSelecionada = posicao
 
-    def removerPeca(self, peca: Peca) -> None:
-        self.__linhaTabuleiro.removerPeca(peca)
+    def matarPecaMarcada(self) -> None:
+        self.__linhaTabuleiro.matarPecaMarcada()
+
+    def moverPecaSelecionada(self, destino: int) -> None:
+        peca = self.__linhaTabuleiro.obterPosicoes()[self.__pecaSelecionada].obterOcupantes()[0]
+        self.__linhaTabuleiro.moverPeca(peca, destino)
+
+    def removerPecaSelecionada(self) -> None:
+        self.__linhaTabuleiro.removerPecaPosicao(self.__pecaSelecionada)
 
     def removerPecas(self) -> None:
         self.__pecas.clear()
