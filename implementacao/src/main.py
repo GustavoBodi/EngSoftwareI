@@ -3,7 +3,6 @@ from tkinter import *
 from tkinter.ttk import *
 
 
-
 class DiceCanvas:
     def __init__(self, canvas, x, y):
         self.__canvas = canvas
@@ -183,7 +182,7 @@ class PecasCanvas:
                                  tag="checkers")
 
 
-class PlayerInterface(DogPlayerInterface):
+class PlayerInterface():
     def __init__(self):
         self.__tk = Tk()
         self.__tk.title("GamÃ£o")
@@ -258,8 +257,8 @@ class PlayerInterface(DogPlayerInterface):
         self.__dado_label.pack()
         self.__canvas.bind("<Button-1>", self.print_checker)
         self.__last_clicked = None
-        self.__apagar_button = Button(self.__tk, text="Apagar Canvas", command=self.apagar_canvas)
-        self.__apagar_button.pack()
+        # self.__apagar_button = Button(self.__tk, text="Apagar Canvas", command=self.apagar_canvas) 
+        # self.__apagar_button.pack()
 
     def print_checker(self, event):
         self.__canvas = event.widget
