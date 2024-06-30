@@ -51,37 +51,41 @@ class Tabuleiro:
                         return False
 
     def avaliarMovimento(self, peca: Peca, posicao: int, dado: int) -> bool:
-        jogador = self.identificaJogadorTurno()
-        alcancavel = self.alcancavelDados(peca, posicao, dado)
-        sentido = jogador.sentidoPontuacao(peca, posicao)
-        if alcancavel and sentido:
-            quantidade = self.__linhaTabuleiro.pecasAdversario(posicao, jogador.obterCorAdversario())
-
-            if quantidade == 1:
-                peca_remover = self.__linhaTabuleiro.obterPecasPosicao(posicao)[0]
-                self.__linhaTabuleiro.marcarRemovida(peca_remover)
-                # self.__linhaTabuleiro.matarPeca(peca_remover)
-                # self.__linhaTabuleiro.removerPeca(peca)
-                # self.__linhaTabuleiro.adicionarPeca(peca, posicao)
-                self.colocaMovimentoRegular()
-                return True
-            elif quantidade == 0:
-                if posicao == 25:
-                    podeSair = self.__linhaTabuleiro.podeSair(jogador.obterCor())
-                    if podeSair:
-                        # self.__linhaTabuleiro.removerPeca(peca)
-                        # jogador.removerPeca(peca)
-                        # self.marcarPontoJogador(jogador)
-                        self.colocaMovimentoRegular()
-                        return True
-                    else:
-                        self.colocaMovimentoIrregular()
-                        return False
-                else:
+        jogador: Jogador = self.identificaJogadorTurno()
+        alcancavel: bool = self.alcancavelDados(peca, posicao, dado)
+        if alcancavel:
+            sentido = self.__linhaTabuleiro.sentidoPontuacao(peca, posicao, jogador)
+            if sentido:
+                pecas: int = self.__linhaTabuleiro.pecasAdversario(posicao, self.__jogadorRemoto)
+                if pecas == 1:
+                    peca_remover = self.__linhaTabuleiro.obterPecasPosicao(posicao)[0]
+                    self.__linhaTabuleiro.marcarRemovida(peca_remover)
+                    # self.__linhaTabuleiro.matarPeca(peca_remover)
                     # self.__linhaTabuleiro.removerPeca(peca)
                     # self.__linhaTabuleiro.adicionarPeca(peca, posicao)
                     self.colocaMovimentoRegular()
                     return True
+                elif pecas == 0:
+                    if posicao == 24:
+                        podeSair = self.__linhaTabuleiro.podeSair(jogador.obterCor())
+                        if podeSair:
+                            # self.__linhaTabuleiro.removerPeca(peca)
+                            # jogador.removerPeca(peca)
+                            # self.marcarPontoJogador(jogador)
+                            self.colocaMovimentoRegular()
+                            return True
+                        else:
+                            self.colocaMovimentoIrregular()
+                            return False
+                    else:
+                        # self.__linhaTabuleiro.removerPeca(peca)
+                        # self.__linhaTabuleiro.adicionarPeca(peca, posicao)
+                        self.colocaMovimentoRegular()
+                        return True
+                else:
+                    self.colocaMovimentoIrregular()
+            else:
+                self.colocaMovimentoIrregular()
 
         self.colocaMovimentoIrregular()
         return False

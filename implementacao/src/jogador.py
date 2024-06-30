@@ -11,7 +11,6 @@ class Jogador:
         self.__turnoPossivel: bool = False
         self.__pecas: list[Peca] = []
         self.__valorMovimento: int = 0
-        self.__sentido: bool = False
 
     def habilitaTurno(self) -> None:
         self.__seuTurno = True
