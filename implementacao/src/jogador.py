@@ -1,11 +1,10 @@
 from peca import Peca
 from linhaTabuleiro import LinhaTabuleiro
 from dado import Dado
-from tabuleiro import Tabuleiro
 
 
 class Jogador:
-    def __init__(self, tabuleiro: Tabuleiro, linhaTabuleiro: LinhaTabuleiro,
+    def __init__(self, tabuleiro, linhaTabuleiro: LinhaTabuleiro,
                  dado: Dado, nome: str, cor: int, identificador: str) -> None:
         self.__nome: str = nome
         self.__cor: int = cor
@@ -16,7 +15,7 @@ class Jogador:
         self.__pecas: list[Peca] = []
         self.__valorMovimento: int = 0
         self.__sentido: bool = False
-        self.__tabuleiro: Tabuleiro = tabuleiro
+        self.__tabuleiro = tabuleiro
         self.__linhaTabuleiro: LinhaTabuleiro = linhaTabuleiro
         self.__dado: Dado = dado
 

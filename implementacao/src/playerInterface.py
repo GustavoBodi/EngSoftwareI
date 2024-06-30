@@ -11,7 +11,7 @@ from tabuleiro import Tabuleiro
 
 class PlayerInterface(DogPlayerInterface):
     def __init__(self):
-        self.__tabuleiro = Tabuleiro()
+        self.__tabuleiro = Tabuleiro(self)
 
         self.__tk = Tk()
         self.__tk.title("Gamão")

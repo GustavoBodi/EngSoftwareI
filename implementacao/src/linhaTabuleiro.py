@@ -1,4 +1,3 @@
-from jogador import Jogador
 from peca import Peca
 from posicao import Posicao
 from cemiterio import Cemiterio
@@ -8,8 +7,8 @@ class LinhaTabuleiro:
     def __init__(self) -> None:
         self.__posicoes: list[Posicao] = [Posicao() for i in range(25)]
         self.__retiradas: list[Peca] = []
-        self.__cemiterio_vermelhas: Cemiterio = Cemiterio()
-        self.__cemiterio_brancas: Cemiterio = Cemiterio()
+        self.__cemiterio_vermelhas: Cemiterio = Cemiterio(0)
+        self.__cemiterio_brancas: Cemiterio = Cemiterio(1)
         self.__removida: Peca = None
 
     def removerPecas(self) -> None:
@@ -78,8 +77,7 @@ class LinhaTabuleiro:
     def pecaMarcadaRemovida(self) -> Peca:
         return self.__removida
 
-    def pecasSairam(self, jogador: Jogador) -> bool:
-        cor: int = jogador.obterCor()
+    def pecasSairam(self, cor: int) -> bool:
         for peca in self.__retiradas:
             if peca.branca() and cor == 0:
                 return True

@@ -1,11 +1,9 @@
 from random import choice
-from diceCanvas import DiceCanvas
-
 
 class Dado:
-    def __init__(self, dado_canvas: DiceCanvas) -> None:
+    def __init__(self, playerInterface) -> None:
         self.__valores: list[int] = []
-        self.__dadoCanvas: DiceCanvas = dado_canvas
+        self.__playerInterface = playerInterface
 
     def zerarDados(self) -> None:
         self.__valores.clear()
@@ -26,7 +24,7 @@ class Dado:
         self.__valores.remove(valor)
 
     def atualizarDadoInterface(self) -> None:
-        self.__dadoCanvas.update(self.obterValores())
+        self.__playerInterface.atualizarDados(self.obterValores())
 
     def obterValores(self) -> list[int]:
         return self.__valores

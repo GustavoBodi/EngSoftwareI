@@ -2,22 +2,21 @@ from dado import Dado
 from jogador import Jogador
 from linhaTabuleiro import LinhaTabuleiro
 from peca import Peca
-from playerInterface import PlayerInterface
 
 class Tabuleiro:
-    def __init__(self) -> None:
+    def __init__(self, playerInterface) -> None:
         self.__linhaTabuleiro: LinhaTabuleiro = LinhaTabuleiro()
         self.__pecas: list[Peca] = [Peca(0) for _ in range(15)]
         for _ in range(15):
             self.__pecas.append(Peca(1))
         self.__estadoPartida: int = 0
-        self.__dados: Dado = Dado()
+        self.__dados: Dado = Dado(playerInterface)
         self.__match_status: int = 0
 
         self.__jogadorLocal: Jogador = Jogador(self, self.__linhaTabuleiro, self.__dados, "", 0, "0")
         self.__jogadorRemoto: Jogador = Jogador(self, self.__linhaTabuleiro, self.__dados, "", 1, "1")
         self.__jogadorTurno: Jogador = self.__jogadorLocal
-        self.__playerInterface: PlayerInterface = PlayerInterface()
+        self.__playerInterface = playerInterface
 
         self.__partidaEmAndamento: bool = False
         self.__movimento = {}
@@ -61,7 +60,7 @@ class Tabuleiro:
                 return True
             elif quantidade == 0:
                 if posicao == 24:
-                    sairam = self.__linhaTabuleiro.pecasSairam(jogador)
+                    sairam = self.__linhaTabuleiro.pecasSairam(jogador.obterCor())
                     if sairam:
                         self.marcarPontoJogador(jogador)
                         self.movimentoRegular()
