@@ -76,11 +76,11 @@ class PlayerInterface(DogPlayerInterface):
         self.__primeiro_dado = DiceCanvas(self.__canvas,
                                        self.__width + self.__checker_points_box_size +
                                        self.__dice_distance,
-                                       self.__height / 2)
+                                       self.__height / 2 - self.__dice_distance)
         self.__segundo_dado = DiceCanvas(self.__canvas,
-                                        self.__width + self.__checker_points_box_size * 2 +
+                                       self.__width + self.__checker_points_box_size +
                                         self.__dice_distance,
-                                        self.__height / 2)
+                                        self.__height / 2 + self.__dice_distance)
 
         self.__dado_label = Button(self.__tk, text="Jogue os dados", command=self.command_dice)
         self.__dado_label.pack()
@@ -132,7 +132,7 @@ class PlayerInterface(DogPlayerInterface):
         print("Iniciar jogo não faz nada")
 
     def command_dice(self):
-        print("Jogar dados")
+        self.__tabuleiro.jogarDados()
 
     def draw_checkers_initial(self):
         first_triangle_white = self.__posicoes[0]
@@ -408,7 +408,7 @@ class PlayerInterface(DogPlayerInterface):
 
     def selecionarDestino(self, posicao) -> None:
         self.__tabuleiro.definirMovimento()
-        (movimentoPossivel, destino) = self.__tabuleiro.avaliarMovimento(posicao, self.__tabuleiro.obterDados())
+        (movimentoPossivel, destino) = self.__tabuleiro.avaliarMovimentoSelecionada(posicao, self.__tabuleiro.obterDados())
         if movimentoPossivel:
             if destino == 0:
                 self.__tabuleiro.removerPecaSelecionada()

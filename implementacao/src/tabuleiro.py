@@ -41,12 +41,15 @@ class Tabuleiro:
     def alcancavelDados(self, peca: int, posicao: int, dado: int) -> bool:
         return peca + dado == posicao or peca - dado == posicao
 
-    def avaliarMovimento(self, posicao: int, dados: list[int]) -> tuple[bool, int]:
+    def avaliarMovimentoSelecionada(self, posicao: int, dados: list[int]) -> tuple[bool, int]:
+        return self.avaliarMovimento(self.__pecaSelecionada, posicao, dados)
+
+    def avaliarMovimento(self, peca: int, posicao: int, dados: list[int]) -> tuple[bool, int]:
         for dado in dados:
             jogador: Jogador = self.identificaJogadorTurno()
-            alcancavel: bool = self.alcancavelDados(self.__pecaSelecionada, posicao, dado)
+            alcancavel: bool = self.alcancavelDados(peca, posicao, dado)
             if alcancavel:
-                sentido: bool = self.__linhaTabuleiro.sentidoPontuacao(self.__pecaSelecionada, posicao, jogador)
+                sentido: bool = self.__linhaTabuleiro.sentidoPontuacao(peca, posicao, jogador)
                 if sentido:
                     pecas: int = self.__linhaTabuleiro.pecasJogador(posicao, jogador.obterCorAdversario())
                     if pecas == 1:
@@ -98,15 +101,14 @@ class Tabuleiro:
     def avaliarPossibilidadeTurno(self, jogador: Jogador) -> bool:
         dados = self.obterDados()
 
-        for dado in dados:
-            for peca in self.__pecas:
-                for posicao in range(0, 25):
-                    movimentoPossivel = self.avaliarMovimento(peca, posicao, dado)
-                    if movimentoPossivel:
-                        jogador.marcarMovimentoPossivel()
-                        return True
+        for peca in self.__pecas:
+            for posicao in range(0, 25):
+                (movimentoPossivel, _) = self.avaliarMovimento(self.__linhaTabuleiro.obterPosicao(peca), posicao, dados)
+                if movimentoPossivel:
+                    jogador.marcarMovimentoPossivel()
+                    return True
 
-        self.marcarMovimentoImpossivel()
+        jogador.marcarMovimentoImpossivel()
         return False
 
     def colocaMovimentoOcorrendo(self) -> None:
@@ -152,7 +154,6 @@ class Tabuleiro:
 
         if movimentoPossivel:
             self.__jogadorLocal.definirTurnoPossivel()
-            # self.registrarDados()
             valores = self.__dados.obterValores()
             self.__playerInterface.atualizarDados(valores)
         else:

@@ -114,6 +114,7 @@ class LinhaTabuleiro:
         for i, posicao in enumerate(self.__posicoes):
             if peca in posicao.obterOcupantes():
                 return i
+        return -1
 
     def obterPecasPosicao(self, posicao: int) -> list[Peca]:
         if posicao <= 23:

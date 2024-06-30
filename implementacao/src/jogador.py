@@ -18,6 +18,9 @@ class Jogador:
     def definirTurnoTerminado(self) -> None:
         self.__seuTurno = False
 
+    def definirTurnoPossivel(self) -> None:
+        self.__turnoPossivel = True
+
     def marcarMovimentoPossivel(self) -> None:
         self.__turnoPossivel = True
 
