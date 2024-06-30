@@ -63,7 +63,7 @@ class Tabuleiro:
                 # self.__linhaTabuleiro.matarPeca(peca_remover)
                 # self.__linhaTabuleiro.removerPeca(peca)
                 # self.__linhaTabuleiro.adicionarPeca(peca, posicao)
-                self.movimentoRegular()
+                self.colocaMovimentoRegular()
                 return True
             elif quantidade == 0:
                 if posicao == 25:
@@ -72,7 +72,7 @@ class Tabuleiro:
                         # self.__linhaTabuleiro.removerPeca(peca)
                         # jogador.removerPeca(peca)
                         # self.marcarPontoJogador(jogador)
-                        self.movimentoRegular()
+                        self.colocaMovimentoRegular()
                         return True
                     else:
                         self.colocaMovimentoIrregular()
@@ -80,7 +80,7 @@ class Tabuleiro:
                 else:
                     # self.__linhaTabuleiro.removerPeca(peca)
                     # self.__linhaTabuleiro.adicionarPeca(peca, posicao)
-                    self.movimentoRegular()
+                    self.colocaMovimentoRegular()
                     return True
 
         self.colocaMovimentoIrregular()
@@ -190,7 +190,7 @@ class Tabuleiro:
     def movimentoOcorrendo(self) -> bool:
         return self.__movimentoOcorrendo
 
-    def movimentoRegular(self) -> None:
+    def colocaMovimentoRegular(self) -> None:
         self.__movimentoRegular = True
 
     def obterDado(self) -> list[int]:

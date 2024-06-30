@@ -86,14 +86,16 @@ class PlayerInterface(DogPlayerInterface):
         self.__canvas.bind("<Button-1>", self.print_checker)
         self.__last_clicked = None
 
-        # player_name = simpledialog.askstring(title="Player identification", prompt="Qual o seu nome?")
-        # self.dog_actor = DogActor()
-        # messagebox.showinfo(message=self.dog_actor.initialize(player_name, self))
+        player_name = simpledialog.askstring(title="Player identification", prompt="Qual o seu nome?")
+        self.dog_actor = DogActor()
+        messagebox.showinfo(message=self.dog_actor.initialize(player_name, self))
 
         self.__tabuleiro = Tabuleiro(self)
         self.montarTabuleiro()
         estado = self.__tabuleiro.obterEstadoJogo()
         self.atualizarInterface(estado)
+
+        self.__canvas.pack()
 
     def print_checker(self, event):
         self.__canvas = event.widget
@@ -278,9 +280,6 @@ class PlayerInterface(DogPlayerInterface):
         elif color == "red":
             self.__cemiterio_vermelhas.add_checker(color)
 
-    def create(self):
-        self.__canvas.pack()
-
     def calculate_triangle_width(self):
         space = self.__width \
                 - 2 * self.__padding \
@@ -375,3 +374,17 @@ class PlayerInterface(DogPlayerInterface):
 
     def montarTabuleiro(self) -> None:
         self.__tabuleiro.montarTabuleiro()
+
+    def interagirCanvas(self) -> None:
+        matchStatus = self.__tabuleiro.statusPartida()
+        if matchStatus == 3 or matchStatus == 4:
+            movimentoOcorrendo = self.__tabuleiro.movimentoOcorrendo()
+            if not movimentoOcorrendo:
+                #TODO: selecionar peca
+                pass
+            else:
+                #TODO: selecionar destino
+                pass
+
+            estado = self.__tabuleiro.obterEstadoJogo()
+            self.atualizarInterface(estado)
