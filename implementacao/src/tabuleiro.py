@@ -170,7 +170,12 @@ class Tabuleiro:
         raise NotImplementedError()
 
     def receberJogada(self, movimento: dict) -> None:
-        raise NotImplementedError()
+        for (peca, pos_final) in movimento['posicoes']:
+            self.__linhaTabuleiro.moverPeca(peca, pos_final)
+        for peca in movimento['fora_tabuleiro']:
+            self.__linhaTabuleiro.retirarPecaTabuleiro(peca)
+        for (peca, cemiterio) in movimento['mortas']:
+            self.__linhaTabuleiro.matarPeca(peca)
 
     def registraAcaoLocal(self, posicao: int) -> None:
         raise NotImplementedError()
@@ -183,7 +188,9 @@ class Tabuleiro:
         self.__linhaTabuleiro.removerPeca(peca)
 
     def resetar_jogo(self) -> None:
-        raise NotImplementedError()
+        self.__jogadorLocal = Jogador()
+        self.__jogadorRemoto = Jogador()
+        self.__pecas.clear()
 
     def statusPartida(self) -> int:
         raise NotImplementedError()
