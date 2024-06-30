@@ -44,31 +44,36 @@ class Tabuleiro:
     def alcancavelDados(self, peca: int, posicao: int, dado: int) -> bool:
         return peca + dado == posicao or peca - dado == posicao
 
-    def avaliarMovimento(self, posicao: int, dado: int) -> tuple[bool, int]:
-        jogador: Jogador = self.identificaJogadorTurno()
-        alcancavel: bool = self.alcancavelDados(self.__pecaSelecionada, posicao, dado)
-        sentido: bool = self.__linhaTabuleiro.sentidoPontuacao(self.__pecaSelecionada, posicao, jogador)
-        if alcancavel and sentido:
-            pecas: int = self.__linhaTabuleiro.pecasJogador(posicao, jogador.obterCorAdversario())
-            if pecas == 1:
-                removida = self.__linhaTabuleiro.obterPecasPosicao(posicao)[0]
-                self.__linhaTabuleiro.marcarRemovida(removida)
-                self.colocaMovimentoRegular()
-                return (True, 1)
-            elif pecas == 0:
-                if posicao == 24:
-                    podeSair = self.__linhaTabuleiro.podeSair(jogador.obterCor())
-                    if podeSair:
+    def avaliarMovimento(self, posicao: int, dados: list[int]) -> tuple[bool, int]:
+        for dado in dados:
+            jogador: Jogador = self.identificaJogadorTurno()
+            alcancavel: bool = self.alcancavelDados(self.__pecaSelecionada, posicao, dado)
+            if alcancavel:
+                sentido: bool = self.__linhaTabuleiro.sentidoPontuacao(self.__pecaSelecionada, posicao, jogador)
+                if sentido:
+                    pecas: int = self.__linhaTabuleiro.pecasJogador(posicao, jogador.obterCorAdversario())
+                    if pecas == 1:
+                        removida = self.__linhaTabuleiro.obterPecasPosicao(posicao)[0]
+                        self.__linhaTabuleiro.marcarRemovida(removida)
                         self.colocaMovimentoRegular()
-                        return (True, 0)
+                        return (True, 1)
+                    elif pecas == 0:
+                        if posicao == 24:
+                            podeSair = self.__linhaTabuleiro.podeSair(jogador.obterCor())
+                            if podeSair:
+                                self.colocaMovimentoRegular()
+                                return (True, 0)
+                            else:
+                                self.colocaMovimentoIrregular()
+                                return (False, 0)
+                        else:
+                            self.colocaMovimentoRegular()
+                            return (True, 2)
                     else:
                         self.colocaMovimentoIrregular()
-                        return (False, 0)
-                else:
-                    self.colocaMovimentoRegular()
-                    return (True, 2)
-            else:
                 self.colocaMovimentoIrregular()
+                return (False, 0)
+
         self.colocaMovimentoIrregular()
         return (False, 0)
 

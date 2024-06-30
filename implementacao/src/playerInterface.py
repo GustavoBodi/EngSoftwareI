@@ -409,4 +409,4 @@ class PlayerInterface(DogPlayerInterface):
 
     def selecionarDestino(self, posicao) -> None:
         self.__tabuleiro.definirMovimento()
-        movimentoPossivel = self.__tabuleiro.avaliarMovimento(posicao, self.__tabuleiro.obterDados()[0])
+        movimentoPossivel = self.__tabuleiro.avaliarMovimento(posicao, self.__tabuleiro.obterDados())
