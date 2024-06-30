@@ -7,9 +7,12 @@ from diceCanvas import DiceCanvas
 from cemiterioCanvas import CemiterioCanvas
 from posicaoCanvas import PosicaoCanvas
 from pecasCanvas import PecasCanvas
+from tabuleiro import Tabuleiro
 
 class PlayerInterface(DogPlayerInterface):
     def __init__(self):
+        self.__tabuleiro = Tabuleiro()
+
         self.__tk = Tk()
         self.__tk.title("Gamão")
         self.__width = 1500

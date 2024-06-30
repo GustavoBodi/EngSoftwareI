@@ -1,5 +1,5 @@
 from random import choice
-from main import DiceCanvas
+from diceCanvas import DiceCanvas
 
 
 class Dado:

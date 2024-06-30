@@ -1,10 +1,8 @@
-from cemiterio import Cemiterio
 from dado import Dado
 from jogador import Jogador
 from linhaTabuleiro import LinhaTabuleiro
 from peca import Peca
-from main import PlayerInterface
-
+from playerInterface import PlayerInterface
 
 class Tabuleiro:
     def __init__(self) -> None:
@@ -16,9 +14,9 @@ class Tabuleiro:
         self.__dados: Dado = Dado()
         self.__match_status: int = 0
 
-        self.__jogadorLocal: Jogador
-        self.__jogadorRemoto: Jogador
-        self.__jogadorTurno: Jogador = None
+        self.__jogadorLocal: Jogador = Jogador(self, self.__linhaTabuleiro, self.__dados, "", 0, "0")
+        self.__jogadorRemoto: Jogador = Jogador(self, self.__linhaTabuleiro, self.__dados, "", 1, "1")
+        self.__jogadorTurno: Jogador = self.__jogadorLocal
         self.__playerInterface: PlayerInterface = PlayerInterface()
 
         self.__partidaEmAndamento: bool = False
