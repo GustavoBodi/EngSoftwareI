@@ -10,6 +10,7 @@ from pecasCanvas import PecasCanvas
 from tabuleiro import Tabuleiro
 from peca import Peca
 
+
 class PlayerInterface(DogPlayerInterface):
     def __init__(self):
         self.__tk = Tk()

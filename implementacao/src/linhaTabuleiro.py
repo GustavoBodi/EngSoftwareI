@@ -34,7 +34,7 @@ class LinhaTabuleiro:
         self.removerPeca(peca)
         if posicao <= 23:
             self.__posicoes[posicao].adicionarOcupante(peca)
-        elif posicao == 24:
+        elif posicao == 25:
             if peca.vermelha():
                 self.__cemiterio_vermelhas.adicionarPeca(peca)
             elif peca.branca():

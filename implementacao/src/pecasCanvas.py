@@ -3,6 +3,7 @@ from tkinter import Canvas
 from posicaoCanvas import PosicaoCanvas
 from peca import Peca
 
+
 class PecasCanvas:
     def __init__(self, canvas: Canvas, size: float):
         self.__canvas: Canvas = canvas
