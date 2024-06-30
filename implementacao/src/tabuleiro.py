@@ -8,29 +8,42 @@ from main import PlayerInterface
 
 class Tabuleiro:
     def __init__(self) -> None:
-        self.__partidaEmAndamento: bool = False
         self.__linhaTabuleiro: LinhaTabuleiro = LinhaTabuleiro()
-        self.__pecas: list[Peca] = []
+        self.__pecas: list[Peca] = [Peca(0) for _ in range(15)]
+        for _ in range(15):
+            self.__pecas.append(Peca(1))
         self.__estadoPartida: int = 0
         self.__dados: Dado = Dado()
         self.__match_status: int = 0
+
         self.__jogadorLocal: Jogador
-        self.__playerInterface: PlayerInterface
+        self.__jogadorRemoto: Jogador
+        self.__playerInterface: PlayerInterface = PlayerInterface()
+
+        self.__partidaEmAndamento: bool = False
+        self.__movimentoRegular: bool = False
+        self.__turnoPossivel: bool = False
+        self.__movimentoOcorrendo: bool = False
+        self.__esperando: bool = False
+        self.__jogadorTurno: Jogador = None
 
     def __inicializar(self, simbolo: int, id: str, nome: str) -> None:
-        raise NotImplementedError()
+        self.__playerInterface = PlayerInterface()
 
     def adicionarPeca(self, peca: Peca, posicao: int) -> None:
-        raise NotImplementedError()
-
-    def adicionarPeca(self, peca: Peca) -> None:
-        raise NotImplementedError()
+        self.__linhaTabuleiro.adicionarPeca(peca, posicao)
 
     def adicionarPecaForaTabuleiro(self, peca: Peca) -> None:
-        raise NotImplementedError()
+        self.__linhaTabuleiro.removerPecaTabuleiro(peca)
 
     def alcancavelDados(self, peca: Peca, posicao: int, dado: int) -> bool:
-        raise NotImplementedError()
+        for i, posicao in enumerate(self.__linhaTabuleiro.obterPosicoes()):
+            for peca_busca in posicao.obterOcupantes():
+                if peca == peca_busca:
+                    if i + dado == posicao or i - dado == posicao:
+                        return True
+                    else:
+                        return False
 
     def avaliarMovimento(self, peca: Peca, posicao: int, dado: int) -> bool:
         jogador = self.identificaJogadorTurno()
@@ -60,20 +73,21 @@ class Tabuleiro:
         self.colocaMovimentoIrregular()
         return False
 
-    def avaliarPossibilidadeTurno(self) -> bool:
-        raise NotImplementedError()
-
     def avaliarTermino(self) -> bool:
-        raise NotImplementedError()
+        jogador = self.identificaJogadorTurno()
+        termino = jogador.acabaramPecas()
+        if termino:
+            self.marcarTerminado()
+            jogador.habilitarComoVencedor()
 
     def colocaMovimentoIrregular(self) -> None:
-        raise NotImplementedError()
+        self.__movimentoRegular = False
 
     def colocaMovimentoOcorrendo(self) -> None:
-        raise NotImplementedError()
+        self.__movimentoOcorrendo = True
 
     def colocarEsperando(self) -> None:
-        raise NotImplementedError()
+        self.__esperando = True
 
     def comecar_partida(self, jogadores: list[str], idJogadorLocal: str) -> None:
         raise NotImplementedError()
@@ -82,10 +96,10 @@ class Tabuleiro:
         raise NotImplementedError()
 
     def definirTurnoPossivel(self) -> None:
-        raise NotImplementedError()
+        self.__turnoPossivel = True
 
     def definirTerminado(self) -> None:
-        raise NotImplementedError()
+        self.__partidaEmAndamento = False
 
     def existePecaCemiterio(self) -> bool:
         raise NotImplementedError()
@@ -112,25 +126,23 @@ class Tabuleiro:
             self.__jogadorLocal.definirTurnoTerminado()
 
     def limparTabuleiro(self) -> None:
-        raise NotImplementedError()
+        self.__linhaTabuleiro.removerPecas()
 
     def marcarJogoTerminado(self) -> None:
-        raise NotImplementedError()
+        self.__partidaEmAndamento = False
 
     def marcarMovimento(self, estado: str) -> None:
         raise NotImplementedError()
 
-    def marcarPontoJogador(self, jogador: Jogador) -> None:
-        raise NotImplementedError()
-
     def marcarTerminado(self) -> None:
-        raise NotImplementedError()
+        # self.__partidaEmAndamento = False
+        pass
 
     def movimentoOcorrendo(self) -> bool:
-        raise NotImplementedError()
+        self.__movimentoOcorrendo = True
 
     def movimentoRegular(self) -> None:
-        raise NotImplementedError()
+        self.__movimentoRegular = True
 
     def obterDado(self) -> list[int]:
         return self.__dados.obterValores()
