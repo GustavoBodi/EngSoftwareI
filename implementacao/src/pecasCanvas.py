@@ -24,22 +24,22 @@ class PecasCanvas:
     def apagarCanvas(self) -> None:
         self.__canvas.delete(self.__oval)
 
-    def desenhar(self, peca: Peca, posicao: PosicaoCanvas) -> None:
+    def desenhar(self, cor: int, posicao: PosicaoCanvas) -> None:
         (x, y) = posicao.get_checker_position()
 
         offset = -self.__size*0.8*posicao.obterOffset()
         if posicao.reverse():
             offset = -offset
 
-        cor = "#FFFDFA"
-        if peca.vermelha():
-            cor = "#E92019"
+        corReal = "#FFFDFA"
+        if cor == 1:
+            corReal = "#E92019"
 
         self.__oval = self.__canvas.create_oval(x - self.__size/2,
                                  y + offset,
                                  x + self.__size/2,
                                  y + self.__size + offset,
-                                 fill=cor,
+                                 fill=corReal,
                                  outline="",
                                  tags=str(posicao.posicao()))
 

@@ -82,14 +82,15 @@ class PlayerInterface(DogPlayerInterface):
                                         self.__dice_distance,
                                         self.__height / 2 + self.__dice_distance)
 
-        self.__dado_label = Button(self.__tk, text="Jogue os dados", command=self.command_dice)
-        self.__dado_label.pack()
+        self.__dadoLabel = Button(self.__tk, text="Jogue os dados", command=self.command_dice)
+        self.__dadoLabel.pack()
         self.__canvas.bind("<Button-1>", self.interagirCanvas)
         self.__last_clicked = None
 
         # player_name = simpledialog.askstring(title="Player identification", prompt="Qual o seu nome?")
-        # self.dog_actor = DogActor()
-        # messagebox.showinfo(message=self.dog_actor.initialize(player_name, self))
+        player_name = "aoeu"
+        self.__dog_actor = DogActor()
+        messagebox.showinfo(message=self.__dog_actor.initialize(player_name, self))
 
         self.__tabuleiro = Tabuleiro(self)
         self.montarTabuleiro()
@@ -132,6 +133,7 @@ class PlayerInterface(DogPlayerInterface):
         print("Iniciar jogo não faz nada")
 
     def command_dice(self):
+        self.__dadoLabel["state"] = "disabled"
         self.__tabuleiro.jogarDados()
 
     def draw_checkers_initial(self):
@@ -349,15 +351,22 @@ class PlayerInterface(DogPlayerInterface):
         messagebox.showinfo(message=start_status.get_message())
 
     def atualizarDados(self, dados: list[int]) -> None:
-        duplicado = len(dados) > 2
-        if not duplicado:
-            self.__primeiro_dado.atualizarDado(dados[0], duplicado)
-            self.__segundo_dado.atualizarDado(dados[1], duplicado)
-        else:
-            self.__primeiro_dado.atualizarDado(dados[0], duplicado)
-            self.__segundo_dado.atualizarDado(dados[0], duplicado)
+        self.__primeiro_dado.limparDado()
+        self.__segundo_dado.limparDado()
 
-    def atualizarInterface(self, estado: dict[str, list[tuple[Peca, int]]]) -> None:
+        if len(dados) == 1:
+            self.__primeiro_dado.atualizarDado(dados[0], False)
+        elif len(dados) == 2:
+            self.__primeiro_dado.atualizarDado(dados[0], False)
+            self.__segundo_dado.atualizarDado(dados[1], False)
+        elif len(dados) == 3:
+            self.__primeiro_dado.atualizarDado(dados[0], True)
+            self.__segundo_dado.atualizarDado(dados[1], False)
+        elif len(dados) == 4:
+            self.__primeiro_dado.atualizarDado(dados[0], True)
+            self.__segundo_dado.atualizarDado(dados[1], True)
+
+    def atualizarInterface(self, estado: dict) -> None:
         for posicao in self.__posicoes:
             posicao.limparOffset()
 
@@ -384,18 +393,35 @@ class PlayerInterface(DogPlayerInterface):
             return
         posicao = int(posicao[0])
 
-        matchStatus = self.__tabuleiro.statusPartida()
-        if matchStatus == 3 or matchStatus == 4:
+        dado = 0
+        statusPartida = self.__tabuleiro.statusPartida()
+        if (statusPartida == 3 or statusPartida == 4) and self.__dadoLabel["state"] == "disabled":
             movimentoOcorrendo = self.__tabuleiro.movimentoOcorrendo()
             if not movimentoOcorrendo:
                 self.selecionarPeca(posicao)
             else:
-                self.selecionarDestino(posicao)
+                dado = self.selecionarDestino(posicao)
 
             estado = self.__tabuleiro.obterEstadoJogo()
             self.atualizarInterface(estado)
 
+        if not self.__tabuleiro.movimentoVazio():
+            self.__tabuleiro.definirMovimentoVazio()
+            self.__tabuleiro.removerDado(dado)
+            turnoPossivel = self.__tabuleiro.avaliarPossibilidadeTurno()
+            print(turnoPossivel)
+            if not turnoPossivel:
+                estado = self.__tabuleiro.obterEstadoJogo()
+                if self.__tabuleiro.statusPartida() == 2:
+                    estado["match_status"] = "finished"
+                else:
+                    estado["match_status"] = "next"
+
+                self.__dog_actor.send_move(estado)
+                self.__tabuleiro.colocarEsperando()
+
     def selecionarPeca(self, posicao: int) -> None:
+        print('selecionarPeca')
         jogador = self.__tabuleiro.identificaJogadorTurno()
         self.__tabuleiro.colocaMovimentoRegular()
         posicaoPropria = self.__tabuleiro.posicaoJogador(posicao, jogador)
@@ -410,23 +436,34 @@ class PlayerInterface(DogPlayerInterface):
         else:
             self.__tabuleiro.colocaMovimentoIrregular()
 
-    def selecionarDestino(self, posicao) -> None:
-        self.__tabuleiro.definirMovimento()
-        (movimentoPossivel, destino) = self.__tabuleiro.avaliarMovimentoSelecionada(posicao, self.__tabuleiro.obterDados())
+    def selecionarDestino(self, posicao) -> int:
+        print('selecionarDestino')
+        self.__tabuleiro.definirMovimentoVazio()
+
+        (movimentoPossivel, destino) = (False, 0)
+        valorDado = 0
+        for dado in self.__tabuleiro.obterDados():
+            (movimentoPossivel, destino) = self.__tabuleiro.avaliarMovimentoSelecionada(posicao, dado)
+            valorDado = dado
+            if movimentoPossivel:
+                break
+
         if movimentoPossivel:
             if destino == 0:
                 self.__tabuleiro.removerPecaSelecionada()
-            if destino == 1:
+            elif destino == 1:
                 self.__tabuleiro.matarPecaMarcada()
+                self.__tabuleiro.moverPecaSelecionada(posicao)
             elif destino == 2:
                 self.__tabuleiro.moverPecaSelecionada(posicao)
 
             self.__tabuleiro.colocaMovimentoNaoOcorrendo()
 
-            termino = self.__tabuleiro.avaliarTermino()
-            if termino:
-                self.__tabuleiro.marcarMovimento('finished')
-            else:
-                self.__tabuleiro.marcarMovimento('next')
+            if destino != 3:
+                self.__tabuleiro.avaliarTermino()
+                self.__tabuleiro.definirMovimento()
+                return valorDado
         else:
             self.__tabuleiro.colocaMovimentoIrregular()
+
+        return 0

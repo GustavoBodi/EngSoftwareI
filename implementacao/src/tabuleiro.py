@@ -19,7 +19,7 @@ class Tabuleiro:
         self.__playerInterface = playerInterface
 
         self.__partidaEmAndamento: bool = False
-        self.__movimento = {}
+        self.__movimentoVazio: bool = True
         self.__movimentoRegular: bool = False
         self.__turnoPossivel: bool = False
         self.__movimentoOcorrendo: bool = False
@@ -41,40 +41,40 @@ class Tabuleiro:
     def alcancavelDados(self, peca: int, posicao: int, dado: int) -> bool:
         return peca + dado == posicao or peca - dado == posicao
 
-    def avaliarMovimentoSelecionada(self, posicao: int, dados: list[int]) -> tuple[bool, int]:
-        return self.avaliarMovimento(self.__pecaSelecionada, posicao, dados)
+    def avaliarMovimentoSelecionada(self, posicao: int, dado: int) -> tuple[bool, int]:
+        return self.avaliarMovimento(self.__pecaSelecionada, posicao, dado)
 
-    def avaliarMovimento(self, peca: int, posicao: int, dados: list[int]) -> tuple[bool, int]:
+    def avaliarMovimento(self, peca: int, posicao: int, dado: int) -> tuple[bool, int]:
         if peca == posicao:
             return (True, 3)
-        for dado in dados:
-            jogador: Jogador = self.identificaJogadorTurno()
-            alcancavel: bool = self.alcancavelDados(peca, posicao, dado)
-            if alcancavel:
-                sentido: bool = self.__linhaTabuleiro.sentidoPontuacao(peca, posicao, jogador)
-                if sentido:
-                    pecas: int = self.__linhaTabuleiro.pecasJogador(posicao, jogador.obterCorAdversario())
-                    if pecas == 1:
-                        removida = self.__linhaTabuleiro.obterPecasPosicao(posicao)[0]
-                        self.__linhaTabuleiro.marcarRemovida(removida)
-                        self.colocaMovimentoRegular()
-                        return (True, 1)
-                    elif pecas == 0:
-                        if posicao == 24:
-                            podeSair = self.__linhaTabuleiro.podeSair(jogador.obterCor())
-                            if podeSair:
-                                self.colocaMovimentoRegular()
-                                return (True, 0)
-                            else:
-                                self.colocaMovimentoIrregular()
-                                return (False, 0)
-                        else:
+
+        jogador: Jogador = self.identificaJogadorTurno()
+        alcancavel: bool = self.alcancavelDados(peca, posicao, dado)
+        if alcancavel:
+            sentido: bool = self.__linhaTabuleiro.sentidoPontuacao(peca, posicao, jogador)
+            if sentido:
+                pecas: int = self.__linhaTabuleiro.pecasJogador(posicao, jogador.obterCorAdversario())
+                if pecas == 1:
+                    removida = self.__linhaTabuleiro.obterPecasPosicao(posicao)[0]
+                    self.__linhaTabuleiro.marcarRemovida(removida)
+                    self.colocaMovimentoRegular()
+                    return (True, 1)
+                elif pecas == 0:
+                    if posicao == 24:
+                        podeSair = self.__linhaTabuleiro.podeSair(jogador.obterCor())
+                        if podeSair:
                             self.colocaMovimentoRegular()
-                            return (True, 2)
+                            return (True, 0)
+                        else:
+                            self.colocaMovimentoIrregular()
+                            return (False, 0)
                     else:
-                        self.colocaMovimentoIrregular()
-                self.colocaMovimentoIrregular()
-                return (False, 0)
+                        self.colocaMovimentoRegular()
+                        return (True, 2)
+                else:
+                    self.colocaMovimentoIrregular()
+            self.colocaMovimentoIrregular()
+            return (False, 0)
 
         self.colocaMovimentoIrregular()
         return (False, 0)
@@ -83,7 +83,7 @@ class Tabuleiro:
         jogador = self.identificaJogadorTurno()
         termino = jogador.acabaramPecas()
         if termino:
-            self.marcarTerminado()
+            self.marcarJogoTerminado()
             jogador.habilitarComoVencedor()
 
         return termino
@@ -100,17 +100,18 @@ class Tabuleiro:
         else:
             return False
 
-    def avaliarPossibilidadeTurno(self, jogador: Jogador) -> bool:
+    def avaliarPossibilidadeTurno(self) -> bool:
         dados = self.obterDados()
 
-        for peca in self.__pecas:
-            for posicao in range(0, 25):
-                (movimentoPossivel, _) = self.avaliarMovimento(self.__linhaTabuleiro.obterPosicao(peca), posicao, dados)
-                if movimentoPossivel:
-                    jogador.marcarMovimentoPossivel()
-                    return True
+        for dado in dados:
+            for peca in self.__pecas:
+                for posicao in range(0, 25):
+                    (movimentoPossivel, _) = self.avaliarMovimento(self.__linhaTabuleiro.obterPosicao(peca), posicao, dado)
+                    if movimentoPossivel:
+                        self.__jogadorLocal.marcarMovimentoPossivel()
+                        return True
 
-        jogador.marcarMovimentoImpossivel()
+        self.__jogadorLocal.marcarMovimentoImpossivel()
         return False
 
     def colocaMovimentoOcorrendo(self) -> None:
@@ -120,13 +121,19 @@ class Tabuleiro:
         self.__movimentoOcorrendo = False
 
     def colocarEsperando(self) -> None:
-        self.__esperando = True
+        self.__estadoPartida = 5
 
     def comecar_partida(self, jogadores: list[str], idJogadorLocal: str) -> None:
         raise NotImplementedError()
 
     def definirMovimento(self) -> None:
-        self.__movimento.clear()
+        self.__movimentoVazio = False
+
+    def definirMovimentoVazio(self) -> None:
+        self.__movimentoVazio = True
+
+    def movimentoVazio(self) -> bool:
+        return self.__movimentoVazio
 
     def definirTurnoPossivel(self) -> None:
         self.__turnoPossivel = True
@@ -152,7 +159,7 @@ class Tabuleiro:
         if valor1 == valor2:
             self.__dados.duplicarDados()
 
-        movimentoPossivel = self.avaliarPossibilidadeTurno(self.__jogadorLocal)
+        movimentoPossivel = self.avaliarPossibilidadeTurno()
 
         if movimentoPossivel:
             self.__jogadorLocal.definirTurnoPossivel()
@@ -177,12 +184,6 @@ class Tabuleiro:
     def marcarJogoTerminado(self) -> None:
         self.__partidaEmAndamento = False
 
-    def marcarMovimento(self, estado: str) -> None:
-        self.__movimento['state'] = estado
-
-    def marcarTerminado(self) -> None:
-        self.__movimento['state'] = "finished"
-
     def movimentoOcorrendo(self) -> bool:
         return self.__movimentoOcorrendo
 
@@ -192,18 +193,21 @@ class Tabuleiro:
     def obterDados(self) -> list[int]:
         return self.__dados.obterValores()
 
-    def obterEstadoJogo(self) -> dict[str, list[tuple[Peca, int]]]:
+    def removerDado(self, valor: int) -> None:
+        return self.__dados.removerDado(valor)
+
+    def obterEstadoJogo(self) -> dict:
         estado = {}
         listaPecasPosicoes = []
         for i, posicao in enumerate(self.__linhaTabuleiro.obterPosicoes()):
-            for ocupantes in posicao.obterOcupantes():
-                listaPecasPosicoes.append((ocupantes, i))
+            for ocupante in posicao.obterOcupantes():
+                listaPecasPosicoes.append((ocupante.cor(), i))
         for peca in self.__linhaTabuleiro.obterPecasCemiterioVermelho():
-            listaPecasPosicoes.append((peca, 25))
+            listaPecasPosicoes.append((peca.cor(), 25))
         for peca in self.__linhaTabuleiro.obterPecasCemiterioBranco():
-            listaPecasPosicoes.append((peca, 25))
+            listaPecasPosicoes.append((peca.cor(), 25))
         for peca in self.__linhaTabuleiro.obterPecasRemovidas():
-            listaPecasPosicoes.append((peca, 24))
+            listaPecasPosicoes.append((peca.cor(), 24))
         estado['pecas'] = listaPecasPosicoes
         return estado
 
