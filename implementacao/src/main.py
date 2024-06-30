@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter.ttk import *
 
 
+
 class DiceCanvas:
     def __init__(self, canvas, x, y):
         self.__canvas = canvas
@@ -10,6 +11,13 @@ class DiceCanvas:
         self.__canvas.create_text(x, y, text=dice[2],
                                   fill="black",
                                   font=('Helvetica 60 bold'))
+
+    def atualizarDado(self, dado: int, duplicado: bool) -> None:
+        raise NotImplementedError()
+
+    def update(self, valore: list[int]):
+        pass
+
 
 class CemiterioCanvas:
     def __init__(self,
@@ -175,7 +183,7 @@ class PecasCanvas:
                                  tag="checkers")
 
 
-class PlayerActor:
+class PlayerInterface(DogPlayerInterface):
     def __init__(self):
         self.__tk = Tk()
         self.__tk.title("GamÃ£o")
@@ -503,7 +511,16 @@ class PlayerActor:
         self.__tk.mainloop()
 
 
+    def atualizarDados(self, dados: list[int]) -> None:
+        duplicado = len(dados) > 2
+        if not duplicado:
+            self.__primeiro_dado.atualizarDado(dados[0], duplicado)
+            self.__segundo_dado.atualizarDado(dados[1], duplicado)
+        else:
+            self.__primeiro_dado.atualizarDado(dados[0], duplicado)
+            self.__segundo_dado.atualizarDado(dados[0], duplicado)
+
 if __name__ == "__main__":
-    player = PlayerActor()
+    player = PlayerInterface()
     player.create()
     player.mainloop()
