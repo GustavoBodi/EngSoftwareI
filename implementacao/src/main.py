@@ -1,7 +1,9 @@
-from tkinter import Tk, Canvas, Menu
+from tkinter import Tk, Canvas, Menu, messagebox, simpledialog
 from tkinter import *
 from tkinter.ttk import *
 
+from dog.dog_actor import DogActor
+from dog.dog_interface import DogPlayerInterface
 
 class DiceCanvas:
     def __init__(self, canvas, x, y):
@@ -182,10 +184,10 @@ class PecasCanvas:
                                  tag="checkers")
 
 
-class PlayerInterface():
+class PlayerInterface(DogPlayerInterface):
     def __init__(self):
         self.__tk = Tk()
-        self.__tk.title("GamÃ£o")
+        self.__tk.title("Gamão")
         self.__width = 1500
         self.__full_width = self.__width + 400
         self.__height = 900
@@ -193,7 +195,7 @@ class PlayerInterface():
         self.__thickness = 20
         self.__middle_line_thickness = 20 + self.__thickness
         self.__tk.geometry(f"{self.__full_width}x{self.__height}")
-        self.__tk.resizable(False, False)
+        self.__tk.resizable(True, True)
         self.__background_color = "#39573f"
         self.__color_green = "#45fc03"
         self.__white_color = "#FFFDFA"
@@ -206,8 +208,8 @@ class PlayerInterface():
                                width=self.__full_width,
                                height=self.__height,
                                bg=self.__background_color)
-        self.__posicoes: [PosicaoCanvas] = []
-        self.__pecas: [PecasCanvas] = []
+        self.__posicoes: list[PosicaoCanvas] = []
+        self.__pecas: list[PecasCanvas] = []
         self.__triangle_base = self.calculate_triangle_width()
         self.__checker_size = min(self.__triangle_base * 0.42,
                                   self.calculate_triangle_height() * 0.2)
@@ -257,8 +259,10 @@ class PlayerInterface():
         self.__dado_label.pack()
         self.__canvas.bind("<Button-1>", self.print_checker)
         self.__last_clicked = None
-        # self.__apagar_button = Button(self.__tk, text="Apagar Canvas", command=self.apagar_canvas) 
-        # self.__apagar_button.pack()
+
+        player_name = simpledialog.askstring(title="Player identification", prompt="Qual o seu nome?")
+        self.dog_actor = DogActor()
+        messagebox.showinfo(message=self.dog_actor.initialize(player_name, self))
 
     def print_checker(self, event):
         self.__canvas = event.widget
@@ -288,10 +292,10 @@ class PlayerInterface():
         self.__tk.config(menu=self.__menu)
 
     def restaurar_estado_inicial(self):
-        print("Restaurar estado inicial nÃ£o faz nada")
+        print("Restaurar estado inicial não faz nada")
 
     def iniciar_jogo(self):
-        print("Iniciar jogo nÃ£o faz nada")
+        print("Iniciar jogo não faz nada")
 
     def command_dice(self):
         print("Jogar dados")
@@ -307,15 +311,15 @@ class PlayerInterface():
         third_triangle_red = self.__posicoes[7]
         fourth_triangle_red = self.__posicoes[5]
 
-        for i in range(2):
+        for _ in range(2):
             self.draw_checker(first_triangle_white, self.__white_color)
             self.draw_checker(first_triangle_red, self.__red_color)
 
-        for i in range(3):
+        for _ in range(3):
             self.draw_checker(third_triangle_white, self.__white_color)
             self.draw_checker(third_triangle_red, self.__red_color)
 
-        for i in range(5):
+        for _ in range(5):
             self.draw_checker(second_triangle_white, self.__white_color)
             self.draw_checker(second_triangle_red, self.__red_color)
             self.draw_checker(fourth_triangle_white, self.__white_color)
@@ -503,12 +507,14 @@ class PlayerInterface():
                                          self.__width + self.__checker_points_box_size * 2 +
                                          self.__dice_distance,
                                          self.__height / 2)
-        
+
         print("tabuleiro resetado")
 
     def mainloop(self):
         self.__tk.mainloop()
 
+    def receive_start(self, start_status):
+        messagebox.showinfo(message=start_status.get_message())
 
     def atualizarDados(self, dados: list[int]) -> None:
         duplicado = len(dados) > 2
