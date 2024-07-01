@@ -120,13 +120,16 @@ class LinhaTabuleiro:
         return -1
 
     def obterPecasPosicao(self, posicao: int) -> list[Peca]:
-        if posicao <= 23:
-            return self.__posicoes[posicao].obterOcupantes()
-        else:
-            raise NotImplementedError()
+        return self.__posicoes[posicao].obterOcupantes()
 
     def obterPecasRemovidas(self) -> list[Peca]:
         return self.__retiradas
 
     def sentidoPontuacao(self, peca: int, posicao: int, jogador: Jogador) -> bool:
+        if peca == 25:
+            if jogador.obterCor() == 0:
+                peca = 24
+            else:
+                peca = -1
+
         return peca > posicao and jogador.obterCor() == 0 or peca < posicao and jogador.obterCor() == 1

@@ -1,7 +1,7 @@
 from tkinter import Canvas
 
 from posicaoCanvas import PosicaoCanvas
-from peca import Peca
+from cemiterioCanvas import CemiterioCanvas
 
 
 class PecasCanvas:
@@ -44,3 +44,28 @@ class PecasCanvas:
                                  tags=str(posicao.posicao()))
 
         posicao.aumentarOffset()
+
+    def desenharCemiterio(self, cor: int, cemiterio: CemiterioCanvas) -> None:
+        (x, y) = cemiterio.get_checker_position()
+        x -= self.__size*16 + self.__size/4
+
+        offset = -self.__size*0.8*cemiterio.obterOffset()
+        if cor == 0:
+            offset = self.__size*1.6*cemiterio.obterOffset()
+            y -= self.__size*2
+        else:
+            y += self.__size*3
+
+        corReal = "#FFFDFA"
+        if cor == 1:
+            corReal = "#E92019"
+
+        self.__oval = self.__canvas.create_oval(x - self.__size/2,
+                                 y + offset,
+                                 x + self.__size/2,
+                                 y + self.__size + offset,
+                                 fill=corReal,
+                                 outline="",
+                                 tags=str(25))
+
+        cemiterio.aumentarOffset()

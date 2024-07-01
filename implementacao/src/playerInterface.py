@@ -306,12 +306,6 @@ class PlayerInterface(DogPlayerInterface):
                                        self.__height - padding,
                                        fill=self.__board_background_color)
 
-    def add_checker_to_cemiterio(self, color: str):
-        if color == "white":
-            self.__cemiterio_brancas.add_checker(color)
-        elif color == "red":
-            self.__cemiterio_vermelhas.add_checker(color)
-
     def calculate_triangle_width(self):
         space = self.__width \
                 - 2 * self.__padding \
@@ -404,8 +398,8 @@ class PlayerInterface(DogPlayerInterface):
         for posicao in self.__posicoes:
             posicao.limparOffset()
 
-        # self.__cemiterio_vermelhas.limparOffset()
-        # self.__cemiterio_brancas.limparOffset()
+        self.__cemiterio_vermelhas.limparOffset()
+        self.__cemiterio_brancas.limparOffset()
 
         for (peca, pecaCanvas) in zip(estado["pecas"], self.__pecas):
             pecaCanvas.apagarCanvas()
@@ -413,7 +407,10 @@ class PlayerInterface(DogPlayerInterface):
                 continue
 
             if peca[1] == 25:
-                #TODO: desenhar no cemiterio
+                if peca[0] == 0:
+                    pecaCanvas.desenharCemiterio(peca[0], self.__cemiterio_brancas)
+                else:
+                    pecaCanvas.desenharCemiterio(peca[0], self.__cemiterio_vermelhas)
                 continue
 
             pecaCanvas.desenhar(peca[0], self.__posicoes[peca[1]])

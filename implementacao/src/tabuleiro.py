@@ -39,6 +39,12 @@ class Tabuleiro:
         self.__pecas.append(peca)
 
     def alcancavelDados(self, peca: int, posicao: int, dado: int) -> bool:
+        if peca == 25:
+            if self.__jogadorLocal.obterCor() == 0:
+                peca = 24
+            else:
+                peca = -1
+
         return peca + dado == posicao or peca - dado == posicao
 
     def avaliarMovimentoSelecionada(self, posicao: int, dado: int) -> tuple[bool, int]:
@@ -90,14 +96,16 @@ class Tabuleiro:
         self.__movimentoRegular = False
 
     def posicaoJogador(self, posicao: int, jogador: Jogador) -> bool:
-        pecas = self.__linhaTabuleiro.obterPecasPosicao(posicao)
-        if len(pecas) > 0:
-            if pecas[0].cor() == jogador.obterCor():
-                return True
+        if posicao == 25:
+            pecas = []
+            if jogador.obterCor() == 0:
+                pecas = self.__linhaTabuleiro.obterPecasCemiterioBranco()
             else:
-                return False
-        else:
-            return False
+                pecas = self.__linhaTabuleiro.obterPecasCemiterioVermelho()
+            return len(pecas) > 0
+
+        pecas = self.__linhaTabuleiro.obterPecasPosicao(posicao)
+        return len(pecas) > 0 and pecas[0].cor() == jogador.obterCor()
 
     def avaliarPossibilidadeTurno(self) -> bool:
         dados = self.obterDados()
@@ -242,7 +250,14 @@ class Tabuleiro:
         self.__linhaTabuleiro.matarPecaMarcada()
 
     def moverPecaSelecionada(self, destino: int) -> None:
-        peca = self.__linhaTabuleiro.obterPosicoes()[self.__pecaSelecionada].obterOcupantes()[0]
+        if self.__pecaSelecionada == 25:
+            if self.__jogadorLocal.obterCor() == 0:
+                peca = self.__linhaTabuleiro.obterPecasCemiterioBranco()[0]
+            else:
+                peca = self.__linhaTabuleiro.obterPecasCemiterioVermelho()[0]
+        else:
+            peca = self.__linhaTabuleiro.obterPosicoes()[self.__pecaSelecionada].obterOcupantes()[0]
+
         self.__linhaTabuleiro.moverPeca(peca, destino)
 
     def removerPecaSelecionada(self) -> None:

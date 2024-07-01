@@ -1,7 +1,5 @@
 from tkinter import Canvas
 
-from pecasCanvas import PecasCanvas
-
 class CemiterioCanvas:
     def __init__(self,
                 canvas: Canvas,
@@ -48,18 +46,14 @@ class CemiterioCanvas:
         self.__canvas.create_rectangle(points, fill=color)
         self.__reverse = True
 
-    def add_checker(self, color: str):
-        x, y = self.offset(len(self.__checkers))
-        new_checker = PecasCanvas(self.__canvas, x, y, self.__height / 10, color)
-        self.__checkers.append(new_checker)
-        new_checker.draw()
-        self.update()
-
     def remove_checker(self):
         if self.__checkers:
             checker = self.__checkers.pop()
             self.__canvas.delete(checker)
             self.update()
+
+    def get_checker_position(self):
+        return self.offset(self.__offset)
 
     def offset(self, index):
         x = self.__padding_x + self.__base / 2
@@ -81,3 +75,6 @@ class CemiterioCanvas:
 
     def aumentarOffset(self) -> None:
         self.__offset += 1
+
+    def reverse(self) -> bool:
+        return self.__reverse
