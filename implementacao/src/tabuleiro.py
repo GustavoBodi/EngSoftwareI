@@ -190,12 +190,17 @@ class Tabuleiro:
         else:
             self.__jogadorLocal.definirTurnoTerminado()
 
-    def montarTabuleiro(self) -> None:
+    def montarTabuleiro(self, host: bool) -> None:
         self.limparTabuleiro()
         for (quantidade, posicao) in [(5,5), (3,7), (5,12), (2,23)]:
         # for (quantidade, posicao) in [(14, 24), (1,0)]:
-            pecas = self.__linhaTabuleiro.posicionaPecas(self.__jogadorLocal, posicao, quantidade)
-            pecas += self.__linhaTabuleiro.posicionaPecas(self.__jogadorRemoto, 23-posicao, quantidade)
+            pecas = []
+            if host:
+                pecas = self.__linhaTabuleiro.posicionaPecas(self.__jogadorLocal, posicao, quantidade)
+                pecas += self.__linhaTabuleiro.posicionaPecas(self.__jogadorRemoto, 23-posicao, quantidade)
+            else:
+                pecas = self.__linhaTabuleiro.posicionaPecas(self.__jogadorLocal, 23-posicao, quantidade)
+                pecas += self.__linhaTabuleiro.posicionaPecas(self.__jogadorRemoto, posicao, quantidade)
             self.adicionarPecas(pecas)
 
     def limparTabuleiro(self) -> None:
@@ -206,6 +211,9 @@ class Tabuleiro:
 
     def marcarJogoTerminado(self) -> None:
         self.__partidaEmAndamento = False
+
+    def marcarJogoNaoTerminado(self) -> None:
+        self.__partidaEmAndamento = True
 
     def jogoTerminado(self) -> bool:
         return not self.__partidaEmAndamento

@@ -172,17 +172,18 @@ class PlayerInterface(DogPlayerInterface):
             idLocal = start_status.get_local_id()
             print(jogadores, idLocal)
 
+            self.__tabuleiro.marcarJogoNaoTerminado()
             if int(jogadores[0][2]) == 1:
                 self.__dadoLabel["state"] = "normal"
                 self.__tabuleiro.definirStatusPartida(3)
                 self.__tabuleiro.inicializar(jogadores[0][0], 0, jogadores[0][1], True)
                 self.__tabuleiro.inicializar(jogadores[1][0], 1, jogadores[1][1], False)
+                self.montarTabuleiro(True)
             else:
                 self.__tabuleiro.definirStatusPartida(5)
                 self.__tabuleiro.inicializar(jogadores[0][0], 1, jogadores[0][1], True)
                 self.__tabuleiro.inicializar(jogadores[1][0], 0, jogadores[1][1], False)
-
-            self.montarTabuleiro()
+                self.montarTabuleiro(False)
 
             estado = self.__tabuleiro.obterEstadoJogo()
             self.atualizarInterface(estado)
@@ -458,8 +459,8 @@ class PlayerInterface(DogPlayerInterface):
 
             pecaCanvas.desenhar(peca[0], self.__posicoes[peca[1]])
 
-    def montarTabuleiro(self) -> None:
-        self.__tabuleiro.montarTabuleiro()
+    def montarTabuleiro(self, host: bool) -> None:
+        self.__tabuleiro.montarTabuleiro(host)
 
     def interagirCanvas(self, event: Event) -> None:
         posicao = self.__canvas.gettags("current")
