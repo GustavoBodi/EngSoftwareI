@@ -120,7 +120,7 @@ class PlayerInterface(DogPlayerInterface):
         self.__menu = Menu(self.__tk)
         filemenu = Menu(self.__menu, tearoff=0)
         filemenu.add_command(label="Iniciar jogo",
-                             command=self.enviarInicioPartida)
+                             command=self.comecarPartida)
         filemenu.add_command(label="Restaurar estado inicial",
                              command=self.apagar_canvas)
         self.__menu.add_cascade(label="Menu", menu=filemenu)
@@ -129,13 +129,13 @@ class PlayerInterface(DogPlayerInterface):
     def restaurar_estado_inicial(self):
         print("Restaurar estado inicial não faz nada")
 
-    def enviarInicioPartida(self):
+    def comecarPartida(self):
         statusPartida = self.__tabuleiro.statusPartida()
         if statusPartida == 1:
             start_status = self.__dog_actor.start_match(2)
-            self.comecarPartida(start_status)
+            self.inicializar(start_status)
 
-    def comecarPartida(self, start_status: StartStatus):
+    def inicializar(self, start_status: StartStatus):
         codigo = start_status.get_code()
         if int(codigo) == 2:
             mensagem = start_status.get_message()
@@ -370,7 +370,7 @@ class PlayerInterface(DogPlayerInterface):
         self.__tk.mainloop()
 
     def receive_start(self, start_status: StartStatus):
-        self.comecarPartida(start_status)
+        self.inicializar(start_status)
 
     def receive_move(self, a_move: dict):
         self.__tabuleiro.receberJogada(a_move)
