@@ -105,8 +105,7 @@ class PlayerInterface(DogPlayerInterface):
         self.__canvas.bind("<Button-1>", self.interagirCanvas)
         self.__last_clicked = -1
 
-        # player_name = simpledialog.askstring(title="Player identification", prompt="Qual o seu nome?")
-        player_name = "aoeu"
+        player_name = simpledialog.askstring(title="Player identification", prompt="Qual o seu nome?")
         self.__dog_actor = DogActor()
         messagebox.showinfo(message=self.__dog_actor.initialize(player_name, self))
 
@@ -160,9 +159,9 @@ class PlayerInterface(DogPlayerInterface):
         statusPartida = self.__tabuleiro.statusPartida()
         if statusPartida == 1:
             start_status = self.__dog_actor.start_match(2)
-            self.inicializar(start_status)
+            self.montarPartida(start_status)
 
-    def inicializar(self, start_status: StartStatus):
+    def montarPartida(self, start_status: StartStatus):
         codigo = start_status.get_code()
         if int(codigo) == 2:
             mensagem = start_status.get_message()
@@ -401,7 +400,7 @@ class PlayerInterface(DogPlayerInterface):
         self.__tk.mainloop()
 
     def receive_start(self, start_status: StartStatus):
-        self.inicializar(start_status)
+        self.montarPartida(start_status)
 
     def receive_move(self, a_move: dict):
         self.__tabuleiro.receberJogada(a_move)
