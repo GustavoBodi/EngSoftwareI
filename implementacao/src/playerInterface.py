@@ -429,20 +429,20 @@ class PlayerInterface(DogPlayerInterface):
             estado = self.__tabuleiro.obterEstadoJogo()
             self.atualizarInterface(estado)
 
-        if not self.__tabuleiro.movimentoVazio():
-            self.__tabuleiro.definirMovimentoVazio()
-            self.__tabuleiro.removerDado(dado)
-            turnoPossivel = self.__tabuleiro.avaliarPossibilidadeTurno()
-            print(turnoPossivel)
-            if not turnoPossivel:
-                estado = self.__tabuleiro.obterEstadoJogo()
-                if self.__tabuleiro.statusPartida() == 2:
-                    estado["match_status"] = "finished"
-                else:
-                    estado["match_status"] = "next"
+            if not self.__tabuleiro.movimentoVazio():
+                self.__tabuleiro.definirMovimentoVazio()
+                self.__tabuleiro.removerDado(dado)
+                turnoPossivel = self.__tabuleiro.avaliarPossibilidadeTurno()
+                print(turnoPossivel)
+                if not turnoPossivel:
+                    if self.__tabuleiro.jogoTerminado():
+                        self.__tabuleiro.definirStatusPartida(2)
+                        estado["match_status"] = "finished"
+                    else:
+                        estado["match_status"] = "next"
 
-                self.__dog_actor.send_move(estado)
-                self.__tabuleiro.colocarEsperando()
+                    self.__dog_actor.send_move(estado)
+                    self.__tabuleiro.colocarEsperando()
 
     def selecionarPeca(self, posicao: int) -> None:
         print('selecionarPeca')

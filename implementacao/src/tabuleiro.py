@@ -184,6 +184,9 @@ class Tabuleiro:
     def marcarJogoTerminado(self) -> None:
         self.__partidaEmAndamento = False
 
+    def jogoTerminado(self) -> bool:
+        return self.__partidaEmAndamento
+
     def movimentoOcorrendo(self) -> bool:
         return self.__movimentoOcorrendo
 
