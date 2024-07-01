@@ -1,0 +1,7 @@
+Executar o codigo
+
+1. Criar e/ou ativar um ambiente virtual (utilizar o módulo python 'venv');
+
+2. Executar 'pip install -r requirements.txt' (para instalar as bibliotecas necessárias);
+
+3. Ir para o diretório 'src' e rodar o comando 'python main.py' (para executar o programa);
