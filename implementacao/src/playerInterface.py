@@ -8,6 +8,7 @@ from diceCanvas import DiceCanvas
 from cemiterioCanvas import CemiterioCanvas
 from posicaoCanvas import PosicaoCanvas
 from pecasCanvas import PecasCanvas
+from saidaCanvas import SaidaCanvas
 from tabuleiro import Tabuleiro
 
 
@@ -59,6 +60,22 @@ class PlayerInterface(DogPlayerInterface):
 
         self.__checker_between_padding = self.__checker_size * 0.8
         self.__checker_bottom_padding = self.__checker_size * 0.3
+        self.__saidaBrancas: SaidaCanvas = SaidaCanvas(self.__canvas,
+                              self.__width - self.__padding - self.__thickness,
+                              self.__height - self.__padding - self.__thickness,
+                              self.__triangle_base,
+                              self.calculate_triangle_height(),
+                              self.__checker_bottom_padding,
+                              self.__checker_between_padding,
+                              24)
+        self.__saidaVermelhas: SaidaCanvas = SaidaCanvas(self.__canvas,
+                              self.__width - self.__padding - self.__thickness,
+                              self.__padding + self.__thickness,
+                              self.__triangle_base,
+                              self.calculate_triangle_height(),
+                              self.__checker_bottom_padding,
+                              self.__checker_between_padding,
+                              24)
         self.draw_board_background()
         self.draw_board_border()
         self.draw_triangles()
@@ -227,6 +244,9 @@ class PlayerInterface(DogPlayerInterface):
                 self.__posicoes[i].draw(color)
             else:
                 self.__posicoes[i].draw_reverse(color)
+
+        self.__saidaBrancas.draw(color)
+        self.__saidaVermelhas.draw_reverse(color)
 
     def draw_checker_box(self, x, y, w, h):
         thickness = self.__thickness / 2
@@ -404,6 +424,10 @@ class PlayerInterface(DogPlayerInterface):
         for (peca, pecaCanvas) in zip(estado["pecas"], self.__pecas):
             pecaCanvas.apagarCanvas()
             if peca[1] == 24:
+                # if peca[0] == 0:
+                #     pecaCanvas.desenharSaida(peca[0], self.__saidaBrancas)
+                # else:
+                #     pecaCanvas.desenharSaida(peca[0], self.__saidaVermelhas)
                 continue
 
             if peca[1] == 25:
@@ -479,17 +503,13 @@ class PlayerInterface(DogPlayerInterface):
                 break
 
         if movimentoPossivel:
-            if destino == 0:
-                self.__tabuleiro.removerPecaSelecionada()
-            elif destino == 1:
+            if destino == 1:
                 self.__tabuleiro.matarPecaMarcada()
-                self.__tabuleiro.moverPecaSelecionada(posicao)
-            elif destino == 2:
-                self.__tabuleiro.moverPecaSelecionada(posicao)
 
             self.__tabuleiro.colocaMovimentoNaoOcorrendo()
 
             if destino != 3:
+                self.__tabuleiro.moverPecaSelecionada(posicao)
                 self.__tabuleiro.avaliarTermino()
                 self.__tabuleiro.definirMovimento()
                 return valorDado

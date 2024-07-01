@@ -2,6 +2,7 @@ from tkinter import Canvas
 
 from posicaoCanvas import PosicaoCanvas
 from cemiterioCanvas import CemiterioCanvas
+from saidaCanvas import SaidaCanvas
 
 
 class PecasCanvas:
@@ -69,3 +70,24 @@ class PecasCanvas:
                                  tags=str(25))
 
         cemiterio.aumentarOffset()
+
+    def desenharSaida(self, cor: int, saida: SaidaCanvas) -> None:
+        (x, y) = saida.get_checker_position()
+
+        offset = -self.__size*0.8*saida.obterOffset()
+        if saida.reverse():
+            offset = -offset
+
+        corReal = "#FFFDFA"
+        if cor == 1:
+            corReal = "#E92019"
+
+        self.__oval = self.__canvas.create_oval(x - self.__size/2,
+                                 y + offset,
+                                 x + self.__size/2,
+                                 y + self.__size + offset,
+                                 fill=corReal,
+                                 outline="",
+                                 tags=str(saida.posicao()))
+
+        saida.aumentarOffset()

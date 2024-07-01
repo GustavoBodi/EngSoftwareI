@@ -32,7 +32,7 @@ class LinhaTabuleiro:
 
     def moverPeca(self, peca: Peca, posicao: int) -> None:
         self.removerPeca(peca)
-        if posicao <= 23:
+        if posicao <= 24:
             self.__posicoes[posicao].adicionarOcupante(peca)
         elif posicao == 25:
             self.adicionarPecaCemiterio(peca)
@@ -89,19 +89,17 @@ class LinhaTabuleiro:
 
     def podeSair(self, cor: int) -> bool:
         quantidade = 0
-        for retirada in self.__retiradas:
-            if retirada.cor() == cor:
-                quantidade += 1
         if cor == 0:
             for i, posicao in enumerate(self.__posicoes):
                 for peca in posicao.obterOcupantes():
-                    if i >= 18:
+                    if peca.cor() == cor and (i < 6 or i == 24):
                         quantidade += 1
         if cor == 1:
             for i, posicao in enumerate(self.__posicoes):
                 for peca in posicao.obterOcupantes():
-                    if i < 6:
+                    if peca.cor() == cor and i >= 18 and i < 25:
                         quantidade += 1
+
         return quantidade == 15
 
     def adicionarPeca(self, peca: Peca, posicao: int) -> None:
@@ -126,6 +124,9 @@ class LinhaTabuleiro:
         return self.__retiradas
 
     def sentidoPontuacao(self, peca: int, posicao: int, jogador: Jogador) -> bool:
+        if posicao == 24:
+            return True
+
         if peca == 25:
             if jogador.obterCor() == 0:
                 peca = 24
