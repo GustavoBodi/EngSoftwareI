@@ -190,6 +190,7 @@ class Tabuleiro:
     def montarTabuleiro(self) -> None:
         self.limparTabuleiro()
         for (quantidade, posicao) in [(5,5), (3,7), (5,12), (2,23)]:
+        # for (quantidade, posicao) in [(14, 24), (1,0)]:
             pecas = self.__linhaTabuleiro.posicionaPecas(self.__jogadorLocal, posicao, quantidade)
             pecas += self.__linhaTabuleiro.posicionaPecas(self.__jogadorRemoto, 23-posicao, quantidade)
             self.adicionarPecas(pecas)

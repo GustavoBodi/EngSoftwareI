@@ -139,12 +139,22 @@ class PlayerInterface(DogPlayerInterface):
         filemenu.add_command(label="Iniciar jogo",
                              command=self.comecarPartida)
         filemenu.add_command(label="Restaurar estado inicial",
-                             command=self.apagar_canvas)
+                             command=self.resetarJogo)
         self.__menu.add_cascade(label="Menu", menu=filemenu)
         self.__tk.config(menu=self.__menu)
 
-    def restaurar_estado_inicial(self):
-        print("Restaurar estado inicial não faz nada")
+    def resetarJogo(self):
+        statusPartida = self.__tabuleiro.statusPartida()
+        if statusPartida != 2:
+            return
+
+        self.__tabuleiro.limparTabuleiro()
+        self.__tabuleiro.definirStatusPartida(1)
+
+        estado = self.__tabuleiro.obterEstadoJogo()
+        self.atualizarInterface(estado)
+
+        messagebox.showinfo(message="Jogo Resetado")
 
     def comecarPartida(self):
         statusPartida = self.__tabuleiro.statusPartida()
@@ -398,6 +408,12 @@ class PlayerInterface(DogPlayerInterface):
         self.__tabuleiro.definirStatusPartida(3)
         self.__dadoLabel["state"] = "normal"
 
+    def receive_withdrawal_notification(self):
+        self.__tabuleiro.marcarJogoTerminado()
+        self.__tabuleiro.definirStatusPartida(2)
+        self.__tabuleiro.jogadorLocal().habilitarComoVencedor()
+        messagebox.showinfo(message="Jogador Remoto Desistiu")
+
     def atualizarDados(self, dados: list[int]) -> None:
         self.__primeiro_dado.limparDado()
         self.__segundo_dado.limparDado()
@@ -468,11 +484,12 @@ class PlayerInterface(DogPlayerInterface):
                     if self.__tabuleiro.jogoTerminado():
                         self.__tabuleiro.definirStatusPartida(2)
                         estado["match_status"] = "finished"
+                        self.__dog_actor.send_move(estado)
                     else:
                         estado["match_status"] = "next"
+                        self.__tabuleiro.colocarEsperando()
+                        self.__dog_actor.send_move(estado)
 
-                    self.__dog_actor.send_move(estado)
-                    self.__tabuleiro.colocarEsperando()
 
     def selecionarPeca(self, posicao: int) -> None:
         print('selecionarPeca')
