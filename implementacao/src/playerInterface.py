@@ -2,13 +2,13 @@ from tkinter import Event, Tk, Canvas, Menu, messagebox, simpledialog, Button
 
 from dog.dog_actor import DogActor
 from dog.dog_interface import DogPlayerInterface
+from dog.start_status import StartStatus
 
 from diceCanvas import DiceCanvas
 from cemiterioCanvas import CemiterioCanvas
 from posicaoCanvas import PosicaoCanvas
 from pecasCanvas import PecasCanvas
 from tabuleiro import Tabuleiro
-from peca import Peca
 
 
 class PlayerInterface(DogPlayerInterface):
@@ -82,7 +82,8 @@ class PlayerInterface(DogPlayerInterface):
                                         self.__dice_distance,
                                         self.__height / 2 + self.__dice_distance)
 
-        self.__dadoLabel = Button(self.__tk, text="Jogue os dados", command=self.command_dice)
+        self.__dadoLabel = Button(self.__tk, text="Jogue os dados", command=self.jogarDados)
+        self.__dadoLabel["state"] = "disabled"
         self.__dadoLabel.pack()
         self.__canvas.bind("<Button-1>", self.interagirCanvas)
         self.__last_clicked = None
@@ -120,7 +121,7 @@ class PlayerInterface(DogPlayerInterface):
         self.__menu = Menu(self.__tk)
         filemenu = Menu(self.__menu, tearoff=0)
         filemenu.add_command(label="Iniciar jogo",
-                             command=self.iniciar_jogo)
+                             command=self.enviarInicioPartida)
         filemenu.add_command(label="Restaurar estado inicial",
                              command=self.apagar_canvas)
         self.__menu.add_cascade(label="Menu", menu=filemenu)
@@ -129,10 +130,33 @@ class PlayerInterface(DogPlayerInterface):
     def restaurar_estado_inicial(self):
         print("Restaurar estado inicial não faz nada")
 
-    def iniciar_jogo(self):
-        print("Iniciar jogo não faz nada")
+    def enviarInicioPartida(self):
+        statusPartida = self.__tabuleiro.statusPartida()
+        if statusPartida == 1:
+            start_status = self.__dog_actor.start_match(2)
+            self.comecarPartida(start_status)
 
-    def command_dice(self):
+    def comecarPartida(self, start_status: StartStatus):
+        codigo = start_status.get_code()
+        if int(codigo) == 2:
+            mensagem = start_status.get_message()
+            messagebox.showinfo(message=mensagem)
+            self.montarTabuleiro()
+
+            jogadores = start_status.get_players()
+            idLocal = start_status.get_local_id()
+            print(jogadores, idLocal)
+
+            if int(jogadores[0][2]) == 1:
+                self.__dadoLabel["state"] = "normal"
+                self.__tabuleiro.definirStatusPartida(3)
+            else:
+                self.__tabuleiro.definirStatusPartida(5)
+
+            estado = self.__tabuleiro.obterEstadoJogo()
+            self.atualizarInterface(estado)
+
+    def jogarDados(self):
         self.__dadoLabel["state"] = "disabled"
         self.__tabuleiro.jogarDados()
 
@@ -347,8 +371,8 @@ class PlayerInterface(DogPlayerInterface):
     def mainloop(self):
         self.__tk.mainloop()
 
-    def receive_start(self, start_status):
-        messagebox.showinfo(message=start_status.get_message())
+    def receive_start(self, start_status: StartStatus):
+        self.comecarPartida(start_status)
 
     def atualizarDados(self, dados: list[int]) -> None:
         self.__primeiro_dado.limparDado()

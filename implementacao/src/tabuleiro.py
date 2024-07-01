@@ -10,7 +10,7 @@ class Tabuleiro:
         self.__pecas: list[Peca] = [Peca(0) for _ in range(15)]
         for _ in range(15):
             self.__pecas.append(Peca(1))
-        self.__estadoPartida: int = 0
+        self.__estadoPartida: int = 1
         self.__dados: Dado = Dado(playerInterface)
 
         self.__jogadorLocal: Jogador = Jogador("", 0, "0")
@@ -249,3 +249,6 @@ class Tabuleiro:
 
     def statusPartida(self) -> int:
         return self.__estadoPartida
+
+    def definirStatusPartida(self, status: int) -> None:
+        self.__estadoPartida = status
