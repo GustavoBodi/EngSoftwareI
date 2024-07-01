@@ -1,3 +1,5 @@
+from tkinter import messagebox
+
 from dado import Dado
 from jogador import Jogador
 from linhaTabuleiro import LinhaTabuleiro
@@ -98,6 +100,7 @@ class Tabuleiro:
             self.marcarJogoTerminado()
             self.__estadoPartida = 2
             self.__jogadorLocal.habilitarComoVencedor()
+            messagebox.showinfo(message="Você Venceu")
 
         return termino
 
@@ -205,7 +208,7 @@ class Tabuleiro:
         self.__partidaEmAndamento = False
 
     def jogoTerminado(self) -> bool:
-        return self.__partidaEmAndamento
+        return not self.__partidaEmAndamento
 
     def movimentoOcorrendo(self) -> bool:
         return self.__movimentoOcorrendo
@@ -254,6 +257,7 @@ class Tabuleiro:
             self.marcarJogoTerminado()
             self.__estadoPartida = 2
             self.__jogadorRemoto.habilitarComoVencedor()
+            messagebox.showinfo(message="Você Perdeu")
 
     def registraAcaoLocal(self, posicao: int) -> None:
         self.__pecaSelecionada = posicao

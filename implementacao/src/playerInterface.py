@@ -405,8 +405,9 @@ class PlayerInterface(DogPlayerInterface):
     def receive_move(self, a_move: dict):
         self.__tabuleiro.receberJogada(a_move)
         self.atualizarInterface(a_move)
-        self.__tabuleiro.definirStatusPartida(3)
-        self.__dadoLabel["state"] = "normal"
+        if self.__tabuleiro.statusPartida() != 2:
+            self.__tabuleiro.definirStatusPartida(3)
+            self.__dadoLabel["state"] = "normal"
 
     def receive_withdrawal_notification(self):
         self.__tabuleiro.marcarJogoTerminado()
@@ -437,8 +438,10 @@ class PlayerInterface(DogPlayerInterface):
         self.__cemiterio_vermelhas.limparOffset()
         self.__cemiterio_brancas.limparOffset()
 
+        for peca in self.__pecas:
+            peca.apagarCanvas()
+
         for (peca, pecaCanvas) in zip(estado["pecas"], self.__pecas):
-            pecaCanvas.apagarCanvas()
             if peca[1] == 24:
                 # if peca[0] == 0:
                 #     pecaCanvas.desenharSaida(peca[0], self.__saidaBrancas)
@@ -480,15 +483,14 @@ class PlayerInterface(DogPlayerInterface):
                 self.__tabuleiro.definirMovimentoVazio()
                 self.__tabuleiro.removerDado(dado)
                 turnoPossivel = self.__tabuleiro.avaliarPossibilidadeTurno()
-                if not turnoPossivel:
-                    if self.__tabuleiro.jogoTerminado():
-                        self.__tabuleiro.definirStatusPartida(2)
-                        estado["match_status"] = "finished"
-                        self.__dog_actor.send_move(estado)
-                    else:
-                        estado["match_status"] = "next"
-                        self.__tabuleiro.colocarEsperando()
-                        self.__dog_actor.send_move(estado)
+                if self.__tabuleiro.jogoTerminado():
+                    self.__tabuleiro.definirStatusPartida(2)
+                    estado["match_status"] = "finished"
+                    self.__dog_actor.send_move(estado)
+                elif not turnoPossivel:
+                    estado["match_status"] = "next"
+                    self.__tabuleiro.colocarEsperando()
+                    self.__dog_actor.send_move(estado)
 
 
     def selecionarPeca(self, posicao: int) -> None:
