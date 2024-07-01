@@ -169,7 +169,6 @@ class PlayerInterface(DogPlayerInterface):
 
             jogadores = start_status.get_players()
             idLocal = start_status.get_local_id()
-            print(jogadores, idLocal)
 
             self.__tabuleiro.marcarJogoNaoTerminado()
             if int(jogadores[0][2]) == 1:
@@ -500,7 +499,6 @@ class PlayerInterface(DogPlayerInterface):
 
 
     def selecionarPeca(self, posicao: int) -> None:
-        print('selecionarPeca')
         jogador = self.__tabuleiro.jogadorLocal()
         self.__tabuleiro.colocaMovimentoRegular()
         posicaoPropria = self.__tabuleiro.posicaoJogador(posicao, jogador)
@@ -517,7 +515,6 @@ class PlayerInterface(DogPlayerInterface):
             self.__tabuleiro.colocaMovimentoIrregular()
 
     def selecionarDestino(self, posicao) -> int:
-        print('selecionarDestino')
         self.__tabuleiro.definirMovimentoVazio()
 
         (movimentoPossivel, destino) = (False, 0)
