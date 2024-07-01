@@ -103,7 +103,7 @@ class PlayerInterface(DogPlayerInterface):
         self.__dadoLabel["state"] = "disabled"
         self.__dadoLabel.pack()
         self.__canvas.bind("<Button-1>", self.interagirCanvas)
-        self.__last_clicked = None
+        self.__last_clicked = -1
 
         # player_name = simpledialog.askstring(title="Player identification", prompt="Qual o seu nome?")
         player_name = "aoeu"
@@ -265,9 +265,9 @@ class PlayerInterface(DogPlayerInterface):
                                        outline=self.__board_border_color,
                                        width=thickness,
                                        fill=self.__board_background_color)
-        self.__canvas.create_text(x + thickness / 4 + w / 2, y + h / 2 + thickness / 4, text="0",
-                                  fill="black",
-                                  font=('Helvetica 15 bold'))
+        # self.__canvas.create_text(x + thickness / 4 + w / 2, y + h / 2 + thickness / 4, text="0",
+        #                           fill="black",
+        #                           font=('Helvetica 15 bold'))
 
     def draw_triagles_right_bottom(self):
         padding_x = self.__width - self.__padding - self.__thickness
@@ -443,6 +443,12 @@ class PlayerInterface(DogPlayerInterface):
             peca.apagarCanvas()
 
         for (peca, pecaCanvas) in zip(estado["pecas"], self.__pecas):
+            selecionado = False
+            if peca[1] == self.__last_clicked:
+                selecionado = True
+
+            cor = peca[0]
+
             if peca[1] == 24:
                 # if peca[0] == 0:
                 #     pecaCanvas.desenharSaida(peca[0], self.__saidaBrancas)
@@ -452,12 +458,12 @@ class PlayerInterface(DogPlayerInterface):
 
             if peca[1] == 25:
                 if peca[0] == 0:
-                    pecaCanvas.desenharCemiterio(peca[0], self.__cemiterio_brancas)
+                    pecaCanvas.desenharCemiterio(cor, self.__cemiterio_brancas, selecionado)
                 else:
-                    pecaCanvas.desenharCemiterio(peca[0], self.__cemiterio_vermelhas)
+                    pecaCanvas.desenharCemiterio(cor, self.__cemiterio_vermelhas, selecionado)
                 continue
 
-            pecaCanvas.desenhar(peca[0], self.__posicoes[peca[1]])
+            pecaCanvas.desenhar(cor, self.__posicoes[peca[1]], selecionado)
 
     def montarTabuleiro(self, host: bool) -> None:
         self.__tabuleiro.montarTabuleiro(host)
@@ -507,6 +513,7 @@ class PlayerInterface(DogPlayerInterface):
             elif (not pecaCemiterio) or (pecaCemiterio and posicao == 25):
                 self.__tabuleiro.registraAcaoLocal(posicao)
                 self.__tabuleiro.colocaMovimentoOcorrendo()
+                self.__last_clicked = posicao
         else:
             self.__tabuleiro.colocaMovimentoIrregular()
 
@@ -527,6 +534,7 @@ class PlayerInterface(DogPlayerInterface):
                 self.__tabuleiro.matarPecaMarcada()
 
             self.__tabuleiro.colocaMovimentoNaoOcorrendo()
+            self.__last_clicked = -1
 
             if destino != 3:
                 self.__tabuleiro.moverPecaSelecionada(posicao)

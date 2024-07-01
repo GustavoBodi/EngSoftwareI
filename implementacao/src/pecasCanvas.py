@@ -25,7 +25,7 @@ class PecasCanvas:
     def apagarCanvas(self) -> None:
         self.__canvas.delete(self.__oval)
 
-    def desenhar(self, cor: int, posicao: PosicaoCanvas) -> None:
+    def desenhar(self, cor: int, posicao: PosicaoCanvas, selecionado: bool) -> None:
         (x, y) = posicao.get_checker_position()
 
         offset = -self.__size*0.8*posicao.obterOffset()
@@ -35,6 +35,9 @@ class PecasCanvas:
         corReal = "#FFFDFA"
         if cor == 1:
             corReal = "#E92019"
+
+        if selecionado:
+            corReal = "#45fc03"
 
         self.__oval = self.__canvas.create_oval(x - self.__size/2,
                                  y + offset,
@@ -46,7 +49,7 @@ class PecasCanvas:
 
         posicao.aumentarOffset()
 
-    def desenharCemiterio(self, cor: int, cemiterio: CemiterioCanvas) -> None:
+    def desenharCemiterio(self, cor: int, cemiterio: CemiterioCanvas, selecionado: bool) -> None:
         (x, y) = cemiterio.get_checker_position()
         x -= self.__size*16 + self.__size/4
 
@@ -60,6 +63,9 @@ class PecasCanvas:
         corReal = "#FFFDFA"
         if cor == 1:
             corReal = "#E92019"
+
+        if selecionado:
+            corReal = "#45fc03"
 
         self.__oval = self.__canvas.create_oval(x - self.__size/2,
                                  y + offset,
