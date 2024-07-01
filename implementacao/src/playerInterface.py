@@ -94,7 +94,6 @@ class PlayerInterface(DogPlayerInterface):
         messagebox.showinfo(message=self.__dog_actor.initialize(player_name, self))
 
         self.__tabuleiro = Tabuleiro(self)
-        self.montarTabuleiro()
         estado = self.__tabuleiro.obterEstadoJogo()
         self.atualizarInterface(estado)
 
@@ -141,7 +140,6 @@ class PlayerInterface(DogPlayerInterface):
         if int(codigo) == 2:
             mensagem = start_status.get_message()
             messagebox.showinfo(message=mensagem)
-            self.montarTabuleiro()
 
             jogadores = start_status.get_players()
             idLocal = start_status.get_local_id()
@@ -150,8 +148,14 @@ class PlayerInterface(DogPlayerInterface):
             if int(jogadores[0][2]) == 1:
                 self.__dadoLabel["state"] = "normal"
                 self.__tabuleiro.definirStatusPartida(3)
+                self.__tabuleiro.inicializar(jogadores[0][0], 0, jogadores[0][1], True)
+                self.__tabuleiro.inicializar(jogadores[1][0], 1, jogadores[1][1], False)
             else:
                 self.__tabuleiro.definirStatusPartida(5)
+                self.__tabuleiro.inicializar(jogadores[0][0], 1, jogadores[0][1], True)
+                self.__tabuleiro.inicializar(jogadores[1][0], 0, jogadores[1][1], False)
+
+            self.montarTabuleiro()
 
             estado = self.__tabuleiro.obterEstadoJogo()
             self.atualizarInterface(estado)
@@ -374,6 +378,12 @@ class PlayerInterface(DogPlayerInterface):
     def receive_start(self, start_status: StartStatus):
         self.comecarPartida(start_status)
 
+    def receive_move(self, a_move: dict):
+        self.__tabuleiro.receberJogada(a_move)
+        self.atualizarInterface(a_move)
+        self.__tabuleiro.definirStatusPartida(3)
+        self.__dadoLabel["state"] = "normal"
+
     def atualizarDados(self, dados: list[int]) -> None:
         self.__primeiro_dado.limparDado()
         self.__segundo_dado.limparDado()
@@ -433,7 +443,6 @@ class PlayerInterface(DogPlayerInterface):
                 self.__tabuleiro.definirMovimentoVazio()
                 self.__tabuleiro.removerDado(dado)
                 turnoPossivel = self.__tabuleiro.avaliarPossibilidadeTurno()
-                print(turnoPossivel)
                 if not turnoPossivel:
                     if self.__tabuleiro.jogoTerminado():
                         self.__tabuleiro.definirStatusPartida(2)
@@ -446,7 +455,7 @@ class PlayerInterface(DogPlayerInterface):
 
     def selecionarPeca(self, posicao: int) -> None:
         print('selecionarPeca')
-        jogador = self.__tabuleiro.identificaJogadorTurno()
+        jogador = self.__tabuleiro.jogadorLocal()
         self.__tabuleiro.colocaMovimentoRegular()
         posicaoPropria = self.__tabuleiro.posicaoJogador(posicao, jogador)
 

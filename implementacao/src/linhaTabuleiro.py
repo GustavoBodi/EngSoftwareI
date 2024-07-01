@@ -35,10 +35,13 @@ class LinhaTabuleiro:
         if posicao <= 23:
             self.__posicoes[posicao].adicionarOcupante(peca)
         elif posicao == 25:
-            if peca.vermelha():
-                self.__cemiterio_vermelhas.adicionarPeca(peca)
-            elif peca.branca():
-                self.__cemiterio_brancas.adicionarPeca(peca)
+            self.adicionarPecaCemiterio(peca)
+
+    def adicionarPecaCemiterio(self, peca: Peca) -> None:
+        if peca.vermelha():
+            self.__cemiterio_vermelhas.adicionarPeca(peca)
+        elif peca.branca():
+            self.__cemiterio_brancas.adicionarPeca(peca)
 
     def removerPecaPosicao(self, posicao: int) -> None:
         self.__posicoes[posicao].removerPeca()
